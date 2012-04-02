@@ -11,21 +11,16 @@
 #ifndef  _HTM07_SPACE_H__INC
 #define  _HTM07_SPACE_H__INC
 
+#include <stdlib.h>
+
 namespace htm07 {
 
 class SpaceT
 {
 public:
-    SpaceT() {}
+    SpaceT(size_t dims, size_t *max) {}
     ~Space() {}
 };
-
-class SubSpaceT
-{
-public:
-    SubSpaceT() {}
-    ~SubSpaceT() {}
-}
 
 }   // namespace htm07
 

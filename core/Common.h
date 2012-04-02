@@ -16,6 +16,15 @@ namespace htm07 {
 
     typedef int         coord_t;
     typedef unsigned    id_t;
+    typedef int         data_t;
+
+#define DATA_SIZE       (sizeof(data_t))
+
+    struct VecT
+    {
+        size_t dims;
+        size_t *max;
+    };
 
 }   // namespace htm07
 

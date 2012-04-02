@@ -17,8 +17,14 @@ namespace htm07 {
 class NodeT
 {
 public:
-    NodeT()    {}
+    NodeT(Layer *layer, VecT *node_start, id_t node_id)    {}
     ~NodeT()   {}
+
+    void nodeExpose(data_t *input);
+    
+    bool learned() const;
+
+
 
 };
 

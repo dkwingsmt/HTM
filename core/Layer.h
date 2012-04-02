@@ -12,13 +12,23 @@
 #ifndef  _HTM07_LAYER_H__INC
 #define  _HTM07_LAYER_H__INC
 
+#include "Space.h"
+
 namespace htm07 {
+
+class NodeT;
 
 class LayerT
 {
+    friend class NodeT;
 public:
-    LayerT()    {}
+    LayerT(VecT *input_size, VecT *node_size)    {}
     ~LayerT()   {}
+
+    void expose(data_t *input_data, const Space *input_space);
+
+private:
+    void nodeSetLearned(id_t target_id);
 
 };
 
