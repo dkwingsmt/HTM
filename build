@@ -1,0 +1,65 @@
+#!/bin/bash
+
+usage () {
+    echo
+    echo " Usage: build [BUILD OPTION] [OTHER OPTIONS]..."
+    echo "      -h or --help            Print this message"
+    echo "      -d or --debug           Build debug executable only"
+    echo "      -r or --release         Build release executable only"
+    echo "      -a or --all             Build both executables"
+    echo "      -c or --clean           Clean build files"
+    #echo " Other options will be directly sent to compiler."
+}
+
+build_debug () {
+    rm -f -r ./debug
+    mkdir debug
+    (cd debug; cmake -DCMAKE_BUILD_TYPE=Debug .. && make)
+}
+
+build_release () {
+    rm -f -r ./release
+    (cd release; cmake -DCMAKE_BUILD_TYPE=Release .. && make)
+}
+
+clean() {
+    rm -f -r ./debug
+    rm -f -r ./release
+}
+
+ARG=$@
+otheropt=""
+
+if [ $# == 0 ]; then
+    buildopt="-h"
+else
+    buildopt=$1
+    buildoptlen=${#buildopt}
+    otheropt=${ARG:$buildoptlen+1}
+fi
+
+#echo "otheroptlen: " ${#otheropt}
+#if [ ${#otheropt} ]; then
+#    echo "Build with option \"$otheropt\""
+#fi
+
+case $buildopt in
+    "-d" | "--debug" )
+        build_debug
+        ;;
+    "-r" | "--release" )
+        build_release
+        ;;
+    "-a" | "--all" )
+        build_debug
+        build_release
+        ;;
+    "-c" | "--clean" )
+        clean
+        ;;
+    * )
+        usage
+        ;;
+esac
+    
+
