@@ -25,7 +25,7 @@ public:
     LayerT(VecT *input_size, VecT *node_size)    {}
     ~LayerT()   {}
 
-    void expose(data_t *input_data, const Space *input_space);
+    void expose(data_t *input_data, const SubSpace *input_space);
 
 private:
     void nodeSetLearned(id_t target_id);
