@@ -25,6 +25,7 @@ namespace htm07 {
         size_t dims;
         size_t *max;
     };
+    void initializeVec(VecT *vec, size_t size);
 
 }   // namespace htm07
 

@@ -15,13 +15,13 @@ namespace htm07 {
 
 class SpPatternListT;
 
-class SpatialPooler
+class SpatialPoolerT
 {
 public:
-    SpatialPooler(NodeT *node)    {}
-    ~SpatialPooler()   {}
+    SpatialPoolerT(NodeT *node)    {}
+    ~SpatialPoolerT()   {}
 
-    void spExpose(data_t *input_data);
+    void spExpose(const data_t *input_data);
     bool learned() const;
 
     SpPatternListT* patternList();
