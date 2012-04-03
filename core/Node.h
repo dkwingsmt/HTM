@@ -17,7 +17,7 @@ namespace htm07 {
 class NodeT
 {
 public:
-    NodeT(Layer *layer, VecT *node_start, id_t node_id)    {}
+    NodeT(Layer *layer, id_t node_id)    {}
     ~NodeT()   {}
 
     void nodeExpose(data_t *input);
