@@ -12,6 +12,8 @@
 #ifndef  _HTM07_COMMON_H__INC
 #define  _HTM07_COMMON_H__INC
 
+#include <cstdlib>
+
 namespace htm07 {
 
     typedef int         coord_t;
@@ -27,7 +29,7 @@ namespace htm07 {
         size_t dims;
         size_t *max;
     };
-    data_t computeDistance(data_t* input1,data_t* input2,size_t size1,size_t size2)
+    data_t computeDistance(const data_t* input1,const data_t* input2,size_t size1,size_t size2);
     void initializeVec(VecT *vec, size_t size);
 
 }   // namespace htm07
