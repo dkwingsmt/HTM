@@ -17,14 +17,14 @@
 namespace htm07 {
 
 
-typedef vector <int> OneDint_T;
+typedef std::vector <int> OneDint_T;
 
 
 
 class SpPatternListT
 {
 public:
-    vector <data_t*> _Patterns;
+    std::vector <data_t*> _Patterns;
     size_t size();
     size_t _Size;
     size_t _PatternSize;
@@ -38,9 +38,9 @@ class SpatialPoolerT
 public:
     SpatialPoolerT(NodeT *node)    {}
     ~SpatialPoolerT()   {}
-
-    void spLearn(data_t *input_data,size_t data_size);//main process
-    data_t * spInference(data_t *input_data,size_t data_size);
+    
+    void spLearn(const data_t *input_data,size_t data_size);//main process
+    const data_t * spInference(const data_t *input_data,size_t data_size); 
     bool learned() const;
     int preInputID;
     data_t _MaxDist;
@@ -48,7 +48,7 @@ public:
     size_t patternSize() const;
 
     void addTimeLine(int prevID,int currID);
-    vector <OneDint_T> _TemporalTable;
+    std::vector <OneDint_T> _TemporalTable;
 };
 
 }   // namespace htm07
