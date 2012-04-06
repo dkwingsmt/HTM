@@ -48,7 +48,7 @@ NodeT::NodeT(LayerT *layer, id_t node_id, const VecT *input_std_size) :
                     input_space->getMaxCoord(i) - input_start_pos.max[i]);
         assert(input_node_size.max[i] > 0);
 
-        // TODO: How to determine the output size? (See Layer::Layer())
+        // TODO(mt): How to determine the output size? (See Layer::Layer())
         output_start_pos.max[i] = nodes_space->getCoord(_Id, i) * 4;
         output_node_size.max[i] = 4;
     }
