@@ -21,8 +21,8 @@ class SubSpaceT;
 class SpaceT
 {
 public:
-    SpaceT(const VecT *max) {}
-    ~SpaceT() {}
+    SpaceT(const VecT *max);
+    ~SpaceT();
 
     coord_t getCoord(id_t id, size_t dim) const;
     coord_t getMaxCoord(id_t id) const;
@@ -30,13 +30,23 @@ public:
 
     bool getSubSpace(const VecT* start_pos, const VecT* size, 
                      SubSpaceT **subspace);
+private:
+    VecT max;
+    size_t *__idProjector;
+    friend class SubSpaceT;
 };
 
 class SubSpaceT
 {
 public:
-    SubSpaceT(SpaceT* space) {}
-    ~SubSpaceT() {}
+    SubSpaceT(){}
+    ~SubSpaceT() ;
+    bool initial(const VecT* start_pos, const VecT* size,SpaceT * origin);
+private:
+    VecT max;
+    VecT _StartPos;
+    SpaceT * _Origin;
+
 };
 
 }   // namespace htm07

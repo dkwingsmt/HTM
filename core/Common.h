@@ -22,8 +22,6 @@ namespace htm07 {
     const data_t INFINITE = 200000000;
     const data_t SPMAXDISTANCE = 0; // max distance to make sure two patterns are the same 
 
-#define DATA_SIZE       (sizeof(data_t))
-
     struct VecT
     {
         size_t dims;
