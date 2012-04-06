@@ -18,8 +18,6 @@ namespace htm07 {
     typedef unsigned    id_t;
     typedef int         data_t;
 
-#define DATA_SIZE       (sizeof(data_t))
-
     struct VecT
     {
         size_t dims;
