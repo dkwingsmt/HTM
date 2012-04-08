@@ -52,7 +52,6 @@ public:
     const data_t * spInference(const data_t *input_data,size_t data_size); 
     bool learned() {return _learned;};
 
-    SpatialPoolerT(NodeT *node){};
     SpatialPoolerT(size_t PatternSize){_PatternList->setPatternSize(PatternSize);}
     ~SpatialPoolerT()   {};
 
