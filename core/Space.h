@@ -16,39 +16,27 @@
 
 namespace htm07 {
 
-class SubSpaceT;
-
 class SpaceT
 {
 public:
     SpaceT(const VecT *max);
     ~SpaceT();
-
-    coord_t getCoord(id_t id, size_t dim) const;
-    coord_t getMaxCoord(id_t id) const;
+    SpaceT(const VecT* start_pos, const VecT* size,SpaceT * origin);
+    coord_t getTotalCoord(id_t id, size_t dim) const;
+    coord_t getTotalLength(id_t id) const;
+    coord_t getSelfLength(id_t id) const;
     size_t getSize() const;
-
     bool getSubSpace(const VecT* start_pos, const VecT* size, 
-                     SubSpaceT **subspace);
+                     SpaceT **subspace);
+    bool isDerived() const{return !_Origin;}
 private:
     VecT max;
+    size_t *_SelfMax;
     size_t *__idProjector;
-    friend class SubSpaceT;
-};
-
-class SubSpaceT
-{
-public:
-    SubSpaceT(){}
-    ~SubSpaceT() ;
-    bool initial(const VecT* start_pos, const VecT* size,SpaceT * origin);
-private:
-    VecT max;
     VecT _StartPos;
-    SpaceT * _Origin;
-
+    SpaceT *_Origin;
+    size_t *_SelfidProjector;
 };
-
 }   // namespace htm07
 
 #endif   /* ----- #ifndef _HTM07_SPACE_H__INC  ----- */
