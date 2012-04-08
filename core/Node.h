@@ -78,6 +78,8 @@ private:
     SubSpaceT *_OutputSpace;    // The subspace of output to the layer
 
     SpatialPoolerT *_Sp;
+
+    data_t *_InputData;
 };
 
 }   // namespace htm07
