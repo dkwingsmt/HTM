@@ -57,8 +57,10 @@ NodeT::NodeT(LayerT *layer, id_t node_id, const VecT *input_std_size) :
     _Layer->_InputSpace->getSubSpace(&output_start_pos, &output_node_size, 
                                      &_OutputSpace );
 
-    _Sp = new SpatialPoolerT(this);
+    _Sp = new SpatialPoolerT(_InputSpace->getSize());
     assert(_Sp && "Allocation failed.");
+    _InputData = new data_t[_InputSpace->getSize()];
+    assert(_InputData && "Allocation failed.");
 
     delete[] input_start_pos.max;
     delete[] input_node_size.max;
@@ -66,13 +68,27 @@ NodeT::NodeT(LayerT *layer, id_t node_id, const VecT *input_std_size) :
     delete[] output_node_size.max;
 }
 
+void NodeT::~NodeT()
+{
+    delete _Sp;
+    delete _InputSpace;
+    delete _OutputSpace;
+    delete[] _InputData;
+}
+
 void NodeT::nodeExpose(const data_t *input)
 {
-    _Sp->spExpose(input);
-    if(_Sp->learned() && !learned())
+    // Transform complete input data to data block
+    size_t input_size = _InputSpace->getSize();
+    
+    if(!learned())
     {
-        _Layer->nodeSetLearned(_Id);
-
+        assert(!_Sp->learned());
+        _Sp->spLearn(_InputData, input_size);
+        if(_Sp->learned())
+        {
+            _Layer->nodeSetLearned(_Id);
+        }
     }
 }
 

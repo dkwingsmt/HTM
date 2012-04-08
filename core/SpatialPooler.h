@@ -56,8 +56,7 @@ public:
     // inference process , will new a data_t as output, need to delete it out side
     bool learned() {return _learned;}; // returns if sp has finished learning process.
 
-    SpatialPoolerT(NodeT *node){};
-    SpatialPoolerT(size_t PatternSize,data_t MaxDist):_MaxDist(MaxDist){_PatternList->setPatternSize(PatternSize);}
+    SpatialPoolerT(size_t PatternSize){_PatternList->setPatternSize(PatternSize);}
     ~SpatialPoolerT()   {};
 
 };
