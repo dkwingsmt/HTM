@@ -25,10 +25,12 @@ public:
     coord_t getTotalCoord(id_t id, size_t dim) const;
     coord_t getTotalLength(id_t id) const;
     coord_t getSelfLength(id_t id) const;
-    size_t getSize() const;
+    size_t getTotalSize() const;
+    size_t getSelfSize() const;
     bool getSubSpace(const VecT* start_pos, const VecT* size, 
                      SpaceT **subspace);
     bool isDerived() const{return !_Origin;}
+    size_t getDimension() const {return max.dims;}
 private:
     VecT max;
     size_t *_SelfMax;
@@ -36,7 +38,9 @@ private:
     VecT _StartPos;
     SpaceT *_Origin;
     size_t *_SelfidProjector;
+    friend bool copyFromSpaceToSubSpace(const size_t * source, size_t * dest, const SpaceT * originspace);
 };
+bool copyFromSpaceToSubSpace(const size_t * source, size_t * dest, const SpaceT * originspace);
 }   // namespace htm07
 
 #endif   /* ----- #ifndef _HTM07_SPACE_H__INC  ----- */

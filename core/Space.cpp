@@ -50,13 +50,25 @@ coord_t SpaceT::getTotalLength(id_t id) const
 coord_t SpaceT::getSelfLength(id_t id) const
 {
     if(id <= max.dims)
-        return _SelfMax[id];
+    {
+        if(isDerived())  
+            return _SelfMax[id];
+        else
+            return max.max[id];
+    }
     else
         return -1;//to be modified
 }
-size_t SpaceT::getSize() const
+size_t SpaceT::getTotalSize() const
 {
     return __idProjector[max.dims+1];
+}
+size_t SpaceT::getSelfSize() const
+{
+    if(!isDerived())
+        return __idProjector[max.dims+1];
+    else
+        return _SelfidProjector[max.dims+1];
 }
 
 bool SpaceT::getSubSpace(const VecT* start_pos, const VecT* size, 
@@ -98,7 +110,69 @@ SpaceT::SpaceT(const VecT* start_pos, const VecT* size,SpaceT * origin)
         this->_StartPos.max[i] = start_pos->max[i];
         _SelfidProjector[i+1] = _SelfidProjector[i] * _SelfMax[i];
     }
-    _Origin = origin;
+    _Origin = origin;//origin here is not totally copied, just a ->
 }
 
+bool copyFromSpaceToSubSpace(const size_t * source, size_t * dest, const SpaceT * originspace)
+{
+    size_t dimension = originspace->getDimension();
+    size_t * startpos = new size_t[dimension];
+    size_t * endpos = new size_t[dimension];
+    size_t * nowpos = new size_t[dimension];
+    for(int i=0;i<dimension;++i)
+    {
+        startpos[i]=originspace->_StartPos.max[i];
+        endpos[i]=startpos[i]+originspace->_SelfMax[i];
+        nowpos[i]=startpos[i];
+    }
+    int countdes = 0;
+    int countsource = 0;
+    while(1)
+    {
+        bool tempflag = true;
+        for(int i = 0; i < dimension&&tempflag; ++i)
+        {
+            if(nowpos[i]+1<endpos[i])
+            {
+                nowpos[i]++;
+                tempflag = false;
+            }
+            else
+            {
+                int tempaddi = i+1; 
+                while(1)
+                {
+                    if(tempaddi == dimension)
+                      break;
+                    if(nowpos[tempaddi]+1<endpos[tempaddi])
+                    {
+                        nowpos[tempaddi]++;
+                        tempflag = false;
+                        for(int k = 0 ;k < tempaddi ; ++k)
+                        {
+                            nowpos[k] = startpos[k];
+                        }//TODO(lrc):poor algorithm
+                        break;
+                    }
+                    else
+                    {
+                        tempaddi++;
+                    }
+                }
+            }
+        }
+        if(tempflag == true)
+          break;
+        countsource = 0;
+        for(int i=0;i<dimension;++i)//TODO(lrc):very very poor algorithm, left to be modified
+        {
+            countsource += nowpos[i]*originspace->__idProjector[i];
+        }
+        dest[countdes] = source[countsource];
+        countdes++;
+    }
+    delete []nowpos;
+    delete []endpos;
+    delete []startpos;
+}
 }   // namespace htm07
