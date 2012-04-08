@@ -21,38 +21,41 @@ typedef std::vector <int> OneDint_T;
 
 
 
-class SpPatternListT
+class SpPatternListT // store the patterns, or the so-called "quantization centers"
 {
 public:
     SpPatternListT(size_t PatternSize):_PatternSize(PatternSize){};
     SpPatternListT();
     ~SpPatternListT();
-    std::vector <data_t*> _Patterns;
-    inline size_t size(){return _Patterns.size();};
+    size_t size(){return _Patterns.size();}; // returns how many patterns are stored
+    size_t getPatternSize(){return _PatternSize;}; // returns the size of each pattern
+    void setPatternSize(size_t PatternSize){_PatternSize=PatternSize;}; 
+    const data_t* getPattern(int i){return _Patterns[i];}; // get pattern by id
+    void push(const data_t * input,size_t data_size); 
+    // input pattern, will new a data_t * to fully copy the data,deleted in the ~Sp...
+private:
     size_t _PatternSize;
-    inline size_t getPatternSize(){return _PatternSize;};
-    inline void setPatternSize(size_t PatternSize){_PatternSize=PatternSize;};
-    inline const data_t* getPattern(int i){return _Patterns[i];};
-    void push(const data_t * input,size_t data_size);
+    std::vector <data_t*> _Patterns;
 };
 
 class SpatialPoolerT
 {
-public:
+private:
 
-    int preInputID;
-    data_t _MaxDist;
+    int _PreInputID;// not be used yet ,for the tp
+    data_t _MaxDist;// the maxdist to distinguish differente patterns.
     SpPatternListT* _PatternList;
-    size_t _PatternSize;
-    std::vector <OneDint_T> _TemporalTable;
+    size_t _PatternSize;// the size of a single pattern.
+    std::vector <OneDint_T> _TemporalTable; // used for tp
     bool _learned; 
-    size_t getQuantsSize() {return _PatternList->size();};
+public:    
+    size_t getQuantsSize() {return _PatternList->size();}; // return how many patterns have been stored
    // void addTimeLine(int prevID,int currID);
-    void spLearn(const data_t *input_data,size_t data_size);//main process
+    void spLearn(const data_t *input_data,size_t data_size);//main process of learning
     const data_t * spInference(const data_t *input_data,size_t data_size); 
-    bool learned() {return _learned;};
+    // inference process , will new a data_t as output, need to delete it out side
+    bool learned() {return _learned;}; // returns if sp has finished learning process.
 
-    SpatialPoolerT(NodeT *node){};
     SpatialPoolerT(size_t PatternSize){_PatternList->setPatternSize(PatternSize);}
     ~SpatialPoolerT()   {};
 
