@@ -14,9 +14,9 @@
 namespace htm07 {
 
 
-SpaceT::SpaceT(const VecT *max)
+SpaceT::SpaceT(const VecT *size)
 {
-    _TotalMax.dims = max->dims;
+    _TotalMax.dims = size->dims;
     _TotalMax.max = new size_t[_TotalMax.dims];
     assert(_TotalMax.max);
     this->_IdProjector= new size_t[_TotalMax.dims];
@@ -25,13 +25,13 @@ SpaceT::SpaceT(const VecT *max)
     this->_SelfMax = new size_t[_TotalMax.dims];
     for(int i = 0;i < _TotalMax.dims; ++i)
     {
-        _IdProjector[i+1] = _IdProjector[i] * max->max[i]; 
-        _TotalMax.max[i] = max->max[i];
-        _SelfMax[i] = max->max[i];
+        _IdProjector[i+1] = _IdProjector[i] * size->max[i]; 
+        _TotalMax.max[i] = size->max[i];
+        _SelfMax[i] = size->max[i];
     }
     _Origin=NULL;
-    this->_StartPos.dims=max->dims;
-    this->_StartPos.max=NULL;
+    this->_StartPos.dims = size->dims;
+    this->_StartPos.max = NULL;
 }
 
 
