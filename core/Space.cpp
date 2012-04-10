@@ -49,7 +49,7 @@ SpaceT::~SpaceT()
     delete []_StartPos.max;
     delete []_IdProjector;
     delete []_SelfMax;
-    delete []_SelfidProjector;
+    delete []_SelfIdProjector;
 }
 SpaceT::SpaceT(const VecT* start_pos, const VecT* size,SpaceT * origin)
 {
@@ -72,7 +72,7 @@ SpaceT::SpaceT(const VecT* start_pos, const VecT* size,SpaceT * origin)
         _IdProjector[i+1] = _IdProjector[i] * max.max[i]; 
         this->max.max[i] = origin->max.max[i];
         this->_StartPos.max[i] = start_pos->max[i];
-        _SelfidProjector[i+1] = _SelfidProjector[i] * _SelfMax[i];
+        _SelfIdProjector[i+1] = _SelfIdProjector[i] * _SelfMax[i];
     }
     _Origin = origin;//origin here is not totally copied, just a ->
 }

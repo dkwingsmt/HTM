@@ -42,7 +42,7 @@ private:
     size_t *_IdProjector;
     VecT _StartPos;
     SpaceT *_Origin;
-    size_t *_SelfidProjector;
+    size_t *_SelfIdProjector;
 
     friend bool copyFromSpaceToSubSpace(const data_t * source, data_t * dest, const SpaceT * originspace);
 };
@@ -83,7 +83,7 @@ size_t SpaceT::getSelfSize() const
     if(!isDerived())
         return _IdProjector[max.dims+1];
     else
-        return _SelfidProjector[max.dims+1];
+        return _SelfIdProjector[max.dims+1];
 }
 
 bool copyFromSpaceToSubSpace(
