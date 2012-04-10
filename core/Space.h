@@ -19,16 +19,20 @@ namespace htm07 {
 class SpaceT
 {
 public:
+    // New SpaceT from a given VecT as size of each dimensions
     SpaceT(const VecT *max);
-    ~SpaceT();
+    // A subspace from an exsisted space within the given region
     SpaceT(const VecT* start_pos, const VecT* size,SpaceT * origin);
+    ~SpaceT();
     inline coord_t getTotalCoord(id_t id, size_t dim) const;
     inline coord_t getTotalLength(id_t id) const;
     inline coord_t getSelfLength(id_t id) const;
     inline size_t getTotalSize() const;
     inline size_t getSelfSize() const;
+
     bool getSubSpace(const VecT* start_pos, const VecT* size, 
                      SpaceT **subspace);
+
     bool isDerived() const{return !_Origin;}
     size_t getDimension() const {return max.dims;}
 private:
@@ -38,7 +42,7 @@ private:
     VecT _StartPos;
     SpaceT *_Origin;
     size_t *_SelfidProjector;
-    friend bool copyFromSpaceToSubSpace(const size_t * source, size_t * dest, const SpaceT * originspace);
+    friend bool copyFromSpaceToSubSpace(const data_t * source, data_t * dest, const SpaceT * originspace);
 };
 
 coord_t SpaceT::getTotalCoord(id_t id, size_t dim) const
@@ -78,7 +82,10 @@ size_t SpaceT::getSelfSize() const
         return _SelfidProjector[max.dims+1];
 }
 
-bool copyFromSpaceToSubSpace(const size_t * source, size_t * dest, const SpaceT * originspace);
+bool copyFromSpaceToSubSpace(
+            const data_t * source, 
+            data_t * dest, 
+            const SpaceT * originspace);
 
 }   // namespace htm07
 
