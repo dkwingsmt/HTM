@@ -34,42 +34,6 @@ SpaceT::SpaceT(const VecT *max)
     this->_StartPos.max=NULL;
 }
 
-coord_t SpaceT::getTotalCoord(id_t id, size_t dim) const
-{
-    return ((id/__idProjector[dim]) % getTotalLength(id));
-}
-
-coord_t SpaceT::getTotalLength(id_t id) const
-{
-    if(id <= max.dims)
-        return max.max[id];
-    else
-        return -1;//to be modified
-}
-
-coord_t SpaceT::getSelfLength(id_t id) const
-{
-    if(id <= max.dims)
-    {
-        if(isDerived())  
-            return _SelfMax[id];
-        else
-            return max.max[id];
-    }
-    else
-        return -1;//to be modified
-}
-size_t SpaceT::getTotalSize() const
-{
-    return __idProjector[max.dims+1];
-}
-size_t SpaceT::getSelfSize() const
-{
-    if(!isDerived())
-        return __idProjector[max.dims+1];
-    else
-        return _SelfidProjector[max.dims+1];
-}
 
 bool SpaceT::getSubSpace(const VecT* start_pos, const VecT* size, 
                      SpaceT **subspace)
