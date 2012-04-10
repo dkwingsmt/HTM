@@ -39,7 +39,7 @@ public:
 private:
     VecT max;
     size_t *_SelfMax;
-    size_t *__idProjector;
+    size_t *_IdProjector;
     VecT _StartPos;
     SpaceT *_Origin;
     size_t *_SelfidProjector;
@@ -49,7 +49,7 @@ private:
 
 coord_t SpaceT::getTotalCoord(id_t id, size_t dim) const
 {
-    return ((id/__idProjector[dim]) % getTotalLength(id));
+    return ((id/_IdProjector[dim]) % getTotalLength(id));
 }
 
 coord_t SpaceT::getTotalLength(size_t dim) const
@@ -75,13 +75,13 @@ coord_t SpaceT::getSelfLength(size_t dim) const
 
 size_t SpaceT::getTotalSize() const
 {
-    return __idProjector[max.dims+1];
+    return _IdProjector[max.dims+1];
 }
 
 size_t SpaceT::getSelfSize() const
 {
     if(!isDerived())
-        return __idProjector[max.dims+1];
+        return _IdProjector[max.dims+1];
     else
         return _SelfidProjector[max.dims+1];
 }

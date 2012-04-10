@@ -19,13 +19,13 @@ SpaceT::SpaceT(const VecT *max)
     this->max.dims = max->dims;
     this->max.max = new size_t[this->max.dims];
     assert(this->max.max);
-    this->__idProjector= new size_t[this->max.dims];
-    assert(this->__idProjector);
-    __idProjector[0]=1;
+    this->_IdProjector= new size_t[this->max.dims];
+    assert(this->_IdProjector);
+    _IdProjector[0]=1;
     this->_SelfMax = new size_t[this->max.dims];
     for(int i = 0;i < this->max.dims; ++i)
     {
-        __idProjector[i+1] = __idProjector[i] * max->max[i]; 
+        _IdProjector[i+1] = _IdProjector[i] * max->max[i]; 
         this->max.max[i] = max->max[i];
         _SelfMax[i] = max->max[i];
     }
@@ -47,7 +47,7 @@ SpaceT::~SpaceT()
 {
     delete []max.max;
     delete []_StartPos.max;
-    delete []__idProjector;
+    delete []_IdProjector;
     delete []_SelfMax;
     delete []_SelfidProjector;
 }
@@ -60,16 +60,16 @@ SpaceT::SpaceT(const VecT* start_pos, const VecT* size,SpaceT * origin)
     assert(this->max.max);
     this->_StartPos.max = new size_t[max.dims];
     assert(this->_StartPos.max);
-    this->__idProjector= new size_t[this->max.dims];
-    assert(this->__idProjector);
+    this->_IdProjector= new size_t[this->max.dims];
+    assert(this->_IdProjector);
     this->_SelfMax = new size_t[max.dims];
-    __idProjector[0]=1;
+    _IdProjector[0]=1;
     this->_SelfMax = new size_t[max.dims];
     _SelfMax[0]=1;
     for(int i = 0;i < max.dims; ++i)
     {
         this->_SelfMax[i]=size->max[i];
-        __idProjector[i+1] = __idProjector[i] * max.max[i]; 
+        _IdProjector[i+1] = _IdProjector[i] * max.max[i]; 
         this->max.max[i] = origin->max.max[i];
         this->_StartPos.max[i] = start_pos->max[i];
         _SelfidProjector[i+1] = _SelfidProjector[i] * _SelfMax[i];
@@ -130,7 +130,7 @@ bool copyFromSpaceToSubSpace(const data_t * source, data_t * dest, const SpaceT 
         countsource = 0;
         for(int i=0;i<dimension;++i)//TODO(lrc):very very poor algorithm, left to be modified
         {
-            countsource += nowpos[i]*originspace->__idProjector[i];
+            countsource += nowpos[i]*originspace->_IdProjector[i];
         }
         dest[countdes] = source[countsource];
         countdes++;
