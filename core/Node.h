@@ -50,7 +50,7 @@ public:
     // Regular deletion.
     ~NodeT();
 
-    /* Function nodeEcpose
+    /* Function nodeExpose
      *
      *     The main input function. Node receives the input and hand it to
      *   spatial pooler. If sp is already learned, hand the result of sp to tp.
@@ -74,8 +74,8 @@ private:
     LayerT *_Layer;     // The layer it belongs
     id_t _Id;           // The id that it is in its layer
     bool _Learned;      // State flag whether node completed learning
-    SubSpaceT *_InputSpace;     // The subspace of input from the layer
-    SubSpaceT *_OutputSpace;    // The subspace of output to the layer
+    SpaceT *_InputSpace;    // The subspace of input from the layer
+    SpaceT *_OutputSpace;   // The subspace of output to the layer
 
     SpatialPoolerT *_Sp;
 

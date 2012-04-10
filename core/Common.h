@@ -13,6 +13,7 @@
 #define  _HTM07_COMMON_H__INC
 
 #include <cstdlib>
+#include <cassert>
 
 namespace htm07 {
 

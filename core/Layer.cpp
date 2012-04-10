@@ -43,10 +43,10 @@ LayerT::LayerT(const VecT *input_size, const VecT *node_size) :
     }
     _OutputSpace = new SpaceT(&output_space_max);
     assert(_OutputSpace && "Allocation failed.");
-    _Output = new data_t[_OutputSpace->getSize()];
+    _Output = new data_t[_OutputSpace->getTotalSize()];
     assert(_Output && "Allocation failed.");
 
-    size_t _NumNode = _NodesSpace->getSize();
+    size_t _NumNode = _NodesSpace->getTotalSize();
     _Nodes = new NodeT *[numNode()];
     assert(_Nodes && "Allocation failed.");
     for(size_t i = 0; i < numNode(); ++i)
@@ -68,6 +68,15 @@ LayerT::~LayerT()
     delete _InputSpace;
     delete _NodesSpace;
     delete _OutputSpace;
+}
+
+void LayerT::expose(const data_t *input_data)
+{
+    for(size_t i = 0; i < numNode(); ++i)
+    {
+        _Nodes[i]->nodeExpose(input_data);
+    }
+
 }
 
 }   // namespace htm07

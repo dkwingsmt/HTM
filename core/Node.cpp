@@ -41,15 +41,15 @@ NodeT::NodeT(LayerT *layer, id_t node_id, const VecT *input_std_size) :
     SpaceT *output_space = _Layer->_OutputSpace;
     for(size_t i = 0; i < dims; ++i)
     {
-        input_start_pos.max[i] = nodes_space->getCoord(_Id, i) 
+        input_start_pos.max[i] = nodes_space->getTotalCoord(_Id, i) 
                                     * input_std_size->max[i];
         input_node_size.max[i] = __minBinary<size_t>(
                     input_std_size->max[i],
-                    input_space->getMaxCoord(i) - input_start_pos.max[i]);
+                    input_space->getSelfLength(i) - input_start_pos.max[i]);
         assert(input_node_size.max[i] > 0);
 
         // TODO(mt): How to determine the output size? (See Layer::Layer())
-        output_start_pos.max[i] = nodes_space->getCoord(_Id, i) * 4;
+        output_start_pos.max[i] = nodes_space->getTotalCoord(_Id, i) * 4;
         output_node_size.max[i] = 4;
     }
     _Layer->_InputSpace->getSubSpace(&input_start_pos, &input_node_size, 
@@ -57,9 +57,9 @@ NodeT::NodeT(LayerT *layer, id_t node_id, const VecT *input_std_size) :
     _Layer->_InputSpace->getSubSpace(&output_start_pos, &output_node_size, 
                                      &_OutputSpace );
 
-    _Sp = new SpatialPoolerT(_InputSpace->getSize());
+    _Sp = new SpatialPoolerT(_InputSpace->getSelfSize());
     assert(_Sp && "Allocation failed.");
-    _InputData = new data_t[_InputSpace->getSize()];
+    _InputData = new data_t[_InputSpace->getSelfSize()];
     assert(_InputData && "Allocation failed.");
 
     delete[] input_start_pos.max;
@@ -68,7 +68,7 @@ NodeT::NodeT(LayerT *layer, id_t node_id, const VecT *input_std_size) :
     delete[] output_node_size.max;
 }
 
-void NodeT::~NodeT()
+NodeT::~NodeT()
 {
     delete _Sp;
     delete _InputSpace;
@@ -79,8 +79,8 @@ void NodeT::~NodeT()
 void NodeT::nodeExpose(const data_t *input)
 {
     // Transform complete input data to data block
-    size_t input_size = _InputSpace->getSize();
-    
+    size_t input_size = _InputSpace->getSelfSize();
+    copyFromSpaceToSubSpace(input, _InputData, _InputSpace);
     if(!learned())
     {
         assert(!_Sp->learned());

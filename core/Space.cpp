@@ -34,11 +34,6 @@ SpaceT::SpaceT(const VecT *max)
     this->_StartPos.max=NULL;
 }
 
-coord_t SpaceT::getTotalCoord(id_t id, size_t dim) const
-{
-    return ((id/__idProjector[dim]) % getTotalLength(id));
-}
-
 coord_t SpaceT::getTotalLength(id_t id) const
 {
     if(id <= max.dims)
@@ -113,7 +108,7 @@ SpaceT::SpaceT(const VecT* start_pos, const VecT* size,SpaceT * origin)
     _Origin = origin;//origin here is not totally copied, just a ->
 }
 
-bool copyFromSpaceToSubSpace(const size_t * source, size_t * dest, const SpaceT * originspace)
+bool copyFromSpaceToSubSpace(const data_t * source, data_t * dest, const SpaceT * originspace)
 {
     size_t dimension = originspace->getDimension();
     size_t * startpos = new size_t[dimension];
