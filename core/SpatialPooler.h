@@ -10,22 +10,22 @@
 
 #ifndef  _HTM07_SPATIAL_POOLER_H__INC
 #define  _HTM07_SPATIAL_POOLER_H__INC
-#include "Common.h"
 #include <vector>
 #include <cassert>
 #include "Node.h"
+#include "Common.h"
+
 namespace htm07 {
 
+class IntrospectionT;
 
 typedef std::vector <int> OneDint_T;
 
-
-
 class SpPatternListT // store the patterns, or the so-called "quantization centers"
 {
+    friend class IntrospectionT;
 public:
     SpPatternListT(size_t PatternSize):_PatternSize(PatternSize){};
-    SpPatternListT();
     ~SpPatternListT();
     size_t size(){return _Patterns.size();}; // returns how many patterns are stored
     size_t getPatternSize(){return _PatternSize;}; // returns the size of each pattern
@@ -40,6 +40,7 @@ private:
 
 class SpatialPoolerT
 {
+    friend class IntrospectionT;
 private:
 
     int _PreInputID;// not be used yet ,for the tp
@@ -56,7 +57,10 @@ public:
     // inference process , will new a data_t as output, need to delete it out side
     bool learned() {return _learned;}; // returns if sp has finished learning process.
 
-    SpatialPoolerT(size_t PatternSize){_PatternList->setPatternSize(PatternSize);}
+    SpatialPoolerT(size_t PatternSize){
+        _PatternList = new SpPatternListT(PatternSize);
+        assert(_PatternList && "Allocation failed.");
+    }
     ~SpatialPoolerT()   {};
 
 };

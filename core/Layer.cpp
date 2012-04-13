@@ -13,7 +13,13 @@
 #include "Layer.h"
 #include "Node.h"
 
+#include <iostream>
+
 namespace htm07 {
+    void LayerT::p() const{
+        for(int i = 0; i < numNode(); ++i)
+          _Nodes[i]->p();
+    }
 
 LayerT::LayerT(const VecT *input_size, const VecT *node_size) :
     _NumNodeLearned(0)
@@ -46,7 +52,8 @@ LayerT::LayerT(const VecT *input_size, const VecT *node_size) :
     _Output = new data_t[_OutputSpace->getTotalSize()];
     assert(_Output && "Allocation failed.");
 
-    size_t _NumNode = _NodesSpace->getTotalSize();
+    _NumNode = _NodesSpace->getTotalSize();
+    std::cerr << "NumNode "<< _NumNode;
     _Nodes = new NodeT *[numNode()];
     assert(_Nodes && "Allocation failed.");
     for(size_t i = 0; i < numNode(); ++i)
@@ -74,6 +81,8 @@ void LayerT::expose(const data_t *input_data)
 {
     for(size_t i = 0; i < numNode(); ++i)
     {
+        std::cerr << "NumNode" << numNode() << "\n";
+        std::cerr << "i" << i << "\n";
         _Nodes[i]->nodeExpose(input_data);
     }
 

@@ -5,7 +5,10 @@ project(HTM07)
 SET ( CMAKE_BUILD_TYPE "Debug" )
 #SET ( CMAKE_BUILD_TYPE "Release" )
 
+add_definitions("-O0")
+
 if( CMAKE_BUILD_TYPE MATCHES "Debug" )
+    message("Debug building.")
     add_definitions("-DDEBUG -g")
 elseif( CMAKE_BUILD_TYPE MATCHES "Release" )
     add_definitions("-DRELEASE")

@@ -16,8 +16,14 @@
 
 namespace htm07 {
 
+class IntrospectionT;
+
+
+class LayerT;
+
 class SpaceT
 {
+    friend class IntrospectionT;
 public:
     // New SpaceT from a given VecT as size of each dimensions
     SpaceT(const VecT *max);
@@ -27,7 +33,7 @@ public:
 
     coord_t getTotalCoord(id_t id, size_t dim) const
     {
-        return ((id/__idProjector[dim]) % getTotalLength(id));
+        return ((id/__idProjector[dim]) % getTotalLength(dim));
     }
     coord_t getTotalLength(size_t id) const;
     coord_t getSelfLength(id_t id) const;
@@ -47,13 +53,14 @@ private:
     VecT _StartPos;
     SpaceT *_Origin;
     size_t *_SelfidProjector;
-    friend bool copyFromSpaceToSubSpace(const data_t * source, data_t * dest, const SpaceT * originspace);
+    friend bool copyFromSpaceToSubSpace(const data_t * source, data_t * dest, const SpaceT * originspace, LayerT *layer);
 };
 
 bool copyFromSpaceToSubSpace(
             const data_t * source, 
             data_t * dest, 
-            const SpaceT * originspace);
+            const SpaceT * originspace,
+            LayerT *layer);
 
 }   // namespace htm07
 

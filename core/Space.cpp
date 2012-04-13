@@ -11,6 +11,13 @@
 #include "Space.h"
 #include <cassert>
 
+#include <iostream>
+
+
+
+
+#include "Layer.h"
+
 namespace htm07 {
 
 
@@ -36,34 +43,34 @@ SpaceT::SpaceT(const VecT *max)
 
 coord_t SpaceT::getTotalLength(id_t id) const
 {
-    if(id <= max.dims)
-        return max.max[id];
-    else
-        return -1;//to be modified
+    if(id < this->max.dims)
+        return this->max.max[id];
+    assert(0);
+    return -1;//to be modified
 }
 
 coord_t SpaceT::getSelfLength(id_t id) const
 {
-    if(id <= max.dims)
+    if(id < max.dims)
     {
         if(isDerived())  
             return _SelfMax[id];
         else
             return max.max[id];
     }
-    else
-        return -1;//to be modified
+    assert(0);
+    return -1;//to be modified
 }
 size_t SpaceT::getTotalSize() const
 {
-    return __idProjector[max.dims+1];
+    return __idProjector[max.dims];
 }
 size_t SpaceT::getSelfSize() const
 {
     if(!isDerived())
-        return __idProjector[max.dims+1];
+        return __idProjector[max.dims];
     else
-        return _SelfidProjector[max.dims+1];
+        return _SelfidProjector[max.dims];
 }
 
 bool SpaceT::getSubSpace(const VecT* start_pos, const VecT* size, 
@@ -97,6 +104,8 @@ SpaceT::SpaceT(const VecT* start_pos, const VecT* size,SpaceT * origin)
     __idProjector[0]=1;
     this->_SelfMax = new size_t[max.dims];
     _SelfMax[0]=1;
+    this->_SelfidProjector = new size_t[this->max.dims];
+    assert(this->_SelfidProjector);
     for(int i = 0;i < max.dims; ++i)
     {
         this->_SelfMax[i]=size->max[i];
@@ -108,7 +117,7 @@ SpaceT::SpaceT(const VecT* start_pos, const VecT* size,SpaceT * origin)
     _Origin = origin;//origin here is not totally copied, just a ->
 }
 
-bool copyFromSpaceToSubSpace(const data_t * source, data_t * dest, const SpaceT * originspace)
+bool copyFromSpaceToSubSpace(const data_t * source, data_t * dest, const SpaceT * originspace, LayerT *layer)
 {
     size_t dimension = originspace->getDimension();
     size_t * startpos = new size_t[dimension];
@@ -124,6 +133,7 @@ bool copyFromSpaceToSubSpace(const data_t * source, data_t * dest, const SpaceT 
     int countsource = 0;
     while(1)
     {
+        std::cerr << "===\n";
         bool tempflag = true;
         for(int i = 0; i < dimension&&tempflag; ++i)
         {
@@ -163,6 +173,7 @@ bool copyFromSpaceToSubSpace(const data_t * source, data_t * dest, const SpaceT 
         {
             countsource += nowpos[i]*originspace->__idProjector[i];
         }
+        std::cerr << "Des" << countdes << " Src" << countsource << '\n';
         dest[countdes] = source[countsource];
         countdes++;
     }

@@ -16,16 +16,17 @@
 #include <highgui.h>
 #include "Layer.h"
 #include "Common.h"
+#include "Introspection.h"
 
 using namespace htm07;
 
 #define DIMS            2
-#define INPUT_HEIGHT    100
-#define INPUT_WIDTH     100
+#define INPUT_HEIGHT    12
+#define INPUT_WIDTH     12
 #define NODE_HEIGHT     4
 #define NODE_WIDTH      4
 
-std::string strip(std::string instr, const char* charset)
+std::string strip(const std::string& instr, const char* charset)
 {
     std::string::size_type first = instr.find_first_not_of(charset);
     return ( first == std::string::npos )
@@ -34,7 +35,8 @@ std::string strip(std::string instr, const char* charset)
 }
 
 void loadImage(const std::string& filename, data_t **p_out);
-void introspectionGnuplot(LayerT *layer);
+void initializeGnuplot(const LayerT *layer);
+void outputGnuplot(const LayerT *layer);
 
 //   Load picture sequence by reading continuous file name of pictures
 // ended by '\n'. 
@@ -52,12 +54,18 @@ int main ( int argc, char *argv[] )
     layer1nodesize.max[1] = NODE_WIDTH;
     LayerT *layer1 = new LayerT(&layer1size, &layer1nodesize);
 
+    initializeGnuplot(layer1);
+
     data_t *input_data = NULL;
 
     std::string infilename;
     while(1)
     {
+        system("read n1");
+        std::cerr << "Once.\n";
         std::getline(std::cin, infilename);
+        if(!std::cin)
+            break;
         infilename = strip(infilename, " \t\n\r");
         if(infilename.size() == 0)
             continue;
@@ -71,8 +79,9 @@ int main ( int argc, char *argv[] )
             break;
         }
         layer1->expose(input_data);
-        introspectionGnuplot(layer1);
+        outputGnuplot(layer1);
     }
+    while(1);
 
     return 0;
 }		
@@ -100,7 +109,6 @@ void loadImage(const std::string& filename, data_t **p_out)
     unsigned nowdata;
     unsigned char nowchar;
     const char* imgdata = img->imageData;
-    std::cerr << '\n';
     for(i = 0; i < height; ++i)
     {
         for(j = 0; j < width; ++j)
@@ -111,20 +119,43 @@ void loadImage(const std::string& filename, data_t **p_out)
                 nowchar = imgdata[i * widthstep + j * channels + k];
                 nowdata += nowchar;
             }
-            //std::cerr << (nowdata);
             // 0x0 if white, 0x1 otherwise; gave a bit of tolerance
             out[nowid] = (nowdata < 0x2f0); 
-            std::cerr << out[nowid];
             ++nowid;
         }
-        std::cerr << '\n';
     }
 
     *p_out = out;
 }
 
 // Use the layer to output debug info.
-void introspectionGnuplot(LayerT *layer)
+void initializeGnuplot(const LayerT *layer)
 {
+    std::cout << "clear" << std::endl;
+    std::cout << "set grid 0 " << std::endl;
+    std::cout << "set key off" << std::endl;
 
+}
+
+void outputGnuplot(const LayerT *layer)
+{
+    IntrospectionT is;
+    size_t nodenum = is.getLayerNodeNum(layer);
+    const SpaceT *nodes_space = layer->nodesSpace();
+
+    size_t xmax = nodes_space->getTotalLength(0);
+    size_t ymax = nodes_space->getTotalLength(1);
+    std::cerr << xmax << " " << ymax << std::endl;
+    std::cout << "splot [0:" << xmax << "] [0:" << ymax << "] [0:10] "
+              << " '-' " << std::endl;
+    std::cerr << "[" << nodenum << "]\n";
+    for(size_t i = 0; i < nodenum; ++i)
+    {
+        size_t x = nodes_space->getTotalCoord(i, 0);
+        size_t y = nodes_space->getTotalCoord(i, 1);
+        size_t centernum = is.getLayerNodeCenterNum(layer, i);
+        std::cout << x << ' ' << y << ' ' << centernum << std::endl;
+        std::cerr << x << ' ' << y << ' ' << centernum << std::endl;
+    }
+    std::cout << "e" << std::endl;
 }

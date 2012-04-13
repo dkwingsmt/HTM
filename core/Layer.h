@@ -17,10 +17,12 @@
 namespace htm07 {
 
 class NodeT;
+class IntrospectionT;
 
 class LayerT
 {
     friend class NodeT;
+    friend class IntrospectionT;
 public:
     LayerT(const VecT *input_size, const VecT *node_size); 
     ~LayerT();
@@ -34,6 +36,9 @@ public:
     const data_t *output() const        { return _Output;   }
     const SpaceT *outputSpace() const   { return _OutputSpace;  }
     const SpaceT *inputSpace() const    { return _InputSpace;   }
+    const SpaceT *nodesSpace() const    { return _NodesSpace;   }
+
+    void p() const;
 private:
     //   Called only by NodeT. 
     //   NodeT plz make sure only call it once, for LayerT don't remember

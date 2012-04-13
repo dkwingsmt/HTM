@@ -16,10 +16,13 @@
 #include "Common.h"
 #include "Layer.h"
 
+#include <iostream>
+
 namespace htm07 {
 
 class SpatialPoolerT;
 class SubSpaceT;
+class IntrospectionT;
 
 /* Class NodeT
  * 
@@ -30,6 +33,7 @@ class SubSpaceT;
  */
 class NodeT
 {
+    friend class IntrospectionT;
 public:
     /* Constructor
      *   
@@ -66,6 +70,8 @@ public:
     //   Whether this node completed learning. Equivalent to the learned state
     // of its sp. Returns true if completed.
     bool learned() const                { return _Learned;  }
+
+    void p() const  {std::cerr << "NodeIS "<<_InputSpace << std::endl;}
 
 private:
     data_t *_outputData()               { return _Layer->_Output;   }
