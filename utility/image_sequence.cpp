@@ -24,6 +24,7 @@
 std::string imageFilename(const char* origin_filename, int number, 
                             int width = 0, const char* postfix = ".bmp")
 {
+    std::cerr << '[' << origin_filename << ']';
     std::ostringstream filename_stream;
     filename_stream << origin_filename << ".";
     if(width != 0)
@@ -31,6 +32,7 @@ std::string imageFilename(const char* origin_filename, int number,
         filename_stream.width(width);
     }
     filename_stream << number << postfix;
+    std::cerr << "[" << filename_stream.str().c_str() << "]\n";
     if(filename_stream)
         return filename_stream.str();
 
@@ -38,12 +40,12 @@ std::string imageFilename(const char* origin_filename, int number,
     return std::string();
 }
 
-//   Given the image file \var src with the size of height*width*depth,
+//   Given the image file \var src with the size of height*width*channels,
 // copy it to \var dst with an offset of \var height_offset on the 
 // height dimension. Fill the rest part with (255, 255, 255)
 //
-//   The image is allocated in the form of [h, [w, [d]]], 
-//   Take (h, w, d) == (5, 10, 3) as example:
+//   The image is allocated in the form of [h, [w, [c]]], 
+//   Take (h, w, c) == (5, 10, 3) as example:
 //   [0, 0, 0]  [0, 0, 1]  [0, 0, 2], 
 //   [0, 1, 0]     ...        ...
 //      ...        ...        ...
@@ -55,21 +57,26 @@ void imgScrollDown(
             char*           dst, 
             int             width,
             int             height,
-            int             depth,
+            int             channels,
             int             height_offset
             )
 {
+    std::cerr << width << ' ' << height << ' ' << channels << '\n';
+    int offset = height_offset;
     for (int i=0;i<height;i++)
       for (int j=0;j<width;j++)
-        for (int k=0;k<depth;k++)
+        for (int k=0;k<channels;k++)
         {
-            int idpre = (i-offset)*width*depth+j*depth+k;
-            int id = i*width*depth+j*depth+k;
-            if (idpre<0||idpre>height*width*depth-1)
+            int idpre = (i-offset)*width*channels+j*channels+k;
+            int id = i*width*channels+j*channels+k;
+            std::cerr << id << ' ';
+            if (idpre<0||idpre>height*width*channels-1)
               dst[id] = 255;
             else
               dst[id] = src[idpre];
         }
+
+    std::cerr << "\nFinished\n";
 }
 
 // Count the width to represent x in decimal base
@@ -153,11 +160,14 @@ int main ( int argc, char *argv[] )
                                         origin->nChannels);
     std::string src_filename = strGetFileName(src_relpath);
     int number_width = decWidth(2*height);
+    std::cerr << number_width << '\n';
+    std::cerr << "{" << src_filename.c_str() << "}\n";
     for(int i = -height; i < height; ++i)
     {
         imgScrollDown(origin->imageData, img_this->imageData, 
                     origin_size.width, origin_size.height,
-                    origin->depth, i);
+                    origin->nChannels, i);
+        std::cerr << "{" << src_filename.c_str() << "}\n";
         std::string imgfilename = imageFilename(src_filename.c_str(), 
                     i+height, number_width);
         imgfilename = tgt_dir + imgfilename;
