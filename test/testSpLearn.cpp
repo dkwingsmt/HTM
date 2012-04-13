@@ -12,6 +12,8 @@
 #include <iostream>
 #include <string>
 #include <fstream>
+#include <cv.h>
+#include <highgui.h>
 #include "Layer.h"
 #include "Common.h"
 
@@ -79,7 +81,46 @@ int main ( int argc, char *argv[] )
 // and store the image to the array in the standard format.
 void loadImage(const std::string& filename, data_t **p_out)
 {
+    IplImage *img = cvLoadImage(filename.c_str(), true);
+    if(!img)
+    {
+        *p_out = NULL;
+        return;
+    }
+    int height = img->height;
+    int width = img->width;
+    int channels = img->nChannels;
+    int widthstep = img->widthStep;
 
+    data_t *out = new data_t[height*width*widthstep];
+    assert(out && "Allocation failed.");
+
+    int i, j, k;
+    int nowid = 0;
+    unsigned nowdata;
+    unsigned char nowchar;
+    const char* imgdata = img->imageData;
+    std::cerr << '\n';
+    for(i = 0; i < height; ++i)
+    {
+        for(j = 0; j < width; ++j)
+        {
+            nowdata = 0;
+            for(k = 0; k < channels; ++k)
+            {
+                nowchar = imgdata[i * widthstep + j * channels + k];
+                nowdata += nowchar;
+            }
+            //std::cerr << (nowdata);
+            // 0x0 if white, 0x1 otherwise; gave a bit of tolerance
+            out[nowid] = (nowdata < 0x2f0); 
+            std::cerr << out[nowid];
+            ++nowid;
+        }
+        std::cerr << '\n';
+    }
+
+    *p_out = out;
 }
 
 // Use the layer to output debug info.

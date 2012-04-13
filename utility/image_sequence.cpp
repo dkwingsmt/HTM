@@ -58,7 +58,7 @@ void imgScrollDown(
             int             height,
             int             channels,
             int             height_offset,
-            int             widthstep = 0
+            int             widthstep = 0   // width * channels default
             )
 {
     if(widthstep == 0)
