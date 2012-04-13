@@ -16,9 +16,9 @@
 #include <highgui.h>
 #include <fstream>
 #include <sstream>
+#include <unistd.h>     // Used for getcwd
 
 #define EXIT_FILENOTFOUNT(filename) {  \
-    std::cerr << "Error: File \"" << (filename) << "\" not found.\nQuit.\n"; \
     exit(-1);  }
 
 std::string imageFilename(const char* origin_filename, int number, 
@@ -42,13 +42,14 @@ std::string imageFilename(const char* origin_filename, int number,
 // copy it to \var dst with an offset of \var height_offset on the 
 // height dimension. Fill the rest part with (255, 255, 255)
 //
-//   The image is allocated in the form of [h, w, d], i.e.
-//   [0, 0, 0]       [0, 0, 1]       [0, 0, 2], 
-//   [0, 1, 0]       ...             ...
-//   ...             ...             ...
-//   [0, width-1, 0] [0, width-1, 1] [0, width-1, 2],
-//   [1, 0, 0]       ...             ...
-//   ...             ...             [height-1, width-1, 2].
+//   The image is allocated in the form of [h, [w, [d]]], 
+//   Take (h, w, d) == (5, 10, 3) as example:
+//   [0, 0, 0]  [0, 0, 1]  [0, 0, 2], 
+//   [0, 1, 0]     ...        ...
+//      ...        ...        ...
+//   [0, 9, 0]  [0, 9, 1]  [0, 9, 2],
+//   [1, 0, 0]     ...        ...
+//      ...        ...     [4, 9, 2].
 void imgScrollDown(
             const char*     src, 
             char*           dst, 
@@ -70,6 +71,13 @@ int decWidth(int x)
     return w;
 }
 
+std::string strGetFileName(const std::string& src)
+{
+    size_t found = src.find_last_of("/\\");
+    // found = -1 if not found, -1 + 1 = 0
+    return src.substr(found + 1);
+}
+
 int main ( int argc, char *argv[] )
 {
     std::cerr << "Image sequence generator v0.0.1\n" 
@@ -80,8 +88,20 @@ int main ( int argc, char *argv[] )
         std::cerr << "Usage: " << argv[0] << " <source file>\n";
     }
 
+    // Get current full path (no final '/')
+    std::string tgt_dir;
+    {
+#define CWD_MAX 300
+        char current_dir[CWD_MAX];
+        if(getcwd(current_dir, CWD_MAX-1) == NULL)
+        {
+            std::cerr << "Error: Failed to get current path.\nQuit.\n";
+            exit(-1);
+        }
+        tgt_dir = current_dir;
+    }
     // Create target directory
-    std::string tgt_dir = "./img_seq/";
+    tgt_dir += "/img_seq/";
     std::string mkdir_cmd = "mkdir -p ";
     mkdir_cmd += tgt_dir;
     int sys_ret;
@@ -91,22 +111,26 @@ int main ( int argc, char *argv[] )
     {
         std::cerr << "Error: Failed to create directory \"" << tgt_dir 
                   << "\".\nQuit.\n";
-        return -1;
+        exit(-1);
     }
 
     // Load source image file
-    const char* src_file = argv[1];
-    IplImage *origin = cvLoadImage(src_file, true);
+    const char* src_relpath = argv[1];
+    IplImage *origin = cvLoadImage(src_relpath, true);
     if(!origin)
     {
-        EXIT_FILENOTFOUNT(src_file);
+        std::cerr << "Error: File \"" << src_relpath << "\" not found.\nQuit.\n";
+        exit(-1);
     }
 
+    // Create list file
     std::string listfile_name = tgt_dir + "list.txt";
     std::ofstream listfile(listfile_name.c_str());
     if(!listfile)
     {
-        EXIT_FILENOTFOUNT(listfile_name.c_str());
+        std::cerr << "Error: Failed to create \"" << listfile_name.c_str() 
+                  << "\".\nQuit.\n";
+        exit(-1);
     }
 
     // Generate image sequence
@@ -114,14 +138,16 @@ int main ( int argc, char *argv[] )
     int height = origin_size.height;
     IplImage *img_this = cvCreateImage(origin_size, origin->depth, 
                                         origin->nChannels);
+    std::string src_filename = strGetFileName(src_relpath);
     int number_width = decWidth(2*height);
     for(int i = -height; i < height; ++i)
     {
         imgScrollDown(origin->imageData, img_this->imageData, 
                     origin_size.width, origin_size.height,
                     origin->depth, i);
-        std::string imgfilename = imageFilename(src_file, i+height, 
-                    number_width);
+        std::string imgfilename = imageFilename(src_filename.c_str(), 
+                    i+height, number_width);
+        imgfilename = tgt_dir + imgfilename;
         cvSaveImage(imgfilename.c_str(), img_this);
         listfile << imgfilename.c_str() << std::endl;
     }

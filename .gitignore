@@ -3,5 +3,5 @@ release
 CMakeFiles
 CMakeCache.txt
 tags
-*.swap
+*.swp
 *~
