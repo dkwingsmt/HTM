@@ -17,4 +17,5 @@ link_directories(${HTM07_BINARY_DIR}/core)
 
 add_subdirectory(core)
 add_subdirectory(test)
+add_subdirectory(utility)
 

@@ -75,10 +75,14 @@ int main ( int argc, char *argv[] )
     return 0;
 }		
 
+//   Load a image with given name, allocate a new data_t array,
+// and store the image to the array in the standard format.
 void loadImage(const std::string& filename, data_t **p_out)
 {
 
 }
+
+// Use the layer to output debug info.
 void introspectionGnuplot(LayerT *layer)
 {
 
