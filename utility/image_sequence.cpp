@@ -56,7 +56,20 @@ void imgScrollDown(
             int             height,
             int             depth,
             int             height_offset
-            );
+            )
+{
+    for (int i=0;i<height;i++)
+      for (int j=0;j<width;j++)
+        for (int k=0;k<depth;k++)
+        {
+            int idpre = (i-offset)*width*depth+j*depth+k;
+            int id = i*width*depth+j*depth+k;
+            if (idpre<0||idpre>height*width*depth-1)
+              dst[id] = 255;
+            else
+              dst[id] = src[idpre];
+        }
+}
 
 // Count the width to represent x in decimal base
 int decWidth(int x)
