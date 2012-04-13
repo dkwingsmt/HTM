@@ -14,6 +14,7 @@
 #include <string>
 #include <cv.h>
 #include <highgui.h>
+#include <fstream>
 #include <sstream>
 
 #define EXIT_FILENOTFOUNT(filename) {  \
@@ -23,7 +24,7 @@
 std::string imageFilename(const char* origin_filename, int number, 
                             int width = 0, const char* postfix = ".bmp")
 {
-    std::istringstream filename_stream;
+    std::ostringstream filename_stream;
     filename_stream << origin_filename << ".";
     if(width != 0)
     {
@@ -102,7 +103,7 @@ int main ( int argc, char *argv[] )
     }
 
     std::string listfile_name = tgt_dir + "list.txt";
-    std::ofstream listfile(listfile_name);
+    std::ofstream listfile(listfile_name.c_str());
     if(!listfile)
     {
         EXIT_FILENOTFOUNT(listfile_name.c_str());
@@ -111,14 +112,14 @@ int main ( int argc, char *argv[] )
     // Generate image sequence
     CvSize origin_size = cvGetSize(origin);
     int height = origin_size.height;
-    IplImage *img_this = cvCreateImage(origin_size, origin.depth, 
-                                        origin.nChannels);
+    IplImage *img_this = cvCreateImage(origin_size, origin->depth, 
+                                        origin->nChannels);
     int number_width = decWidth(2*height);
     for(int i = -height; i < height; ++i)
     {
-        imgScrollDown(origin.imageData, img_this.imageData, 
+        imgScrollDown(origin->imageData, img_this->imageData, 
                     origin_size.width, origin_size.height,
-                    origin.depth, i);
+                    origin->depth, i);
         std::string imgfilename = imageFilename(src_file, i+height, 
                     number_width);
         cvSaveImage(imgfilename.c_str(), img_this);
