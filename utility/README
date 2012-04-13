@@ -1,0 +1,27 @@
+  This folder contains utilities that is not quite part of the htm algorithm
+but helps during test.
+
+image_sequence
+
+    FORMAT:
+        image_sequence <source image>
+    DESC:
+          Generate a list of images and the text file that contains the 
+        full path of them. One image per line. The output will be
+        located in ./img_seq/, and take <source image> is "~/src.bmp" 
+        as an example, it will output:
+
+            ./img_seq/list.txt
+            ./img_seq/src.bmp.0.bmp
+            ./img_seq/src.bmp.1.bmp
+            ./img_seq/src.bmp.2.bmp
+            ...
+
+          At the present time this utility will scroll the source image
+        from top to down. More function may be added later.
+          It may help in testSpLearn, e.g. you may use
+
+          $ testSpLearn < ../utility/img_seq/list.txt
+          
+        to input the file list into the test program.
+          
