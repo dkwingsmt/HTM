@@ -24,15 +24,14 @@
 std::string imageFilename(const char* origin_filename, int number, 
                             int width = 0, const char* postfix = ".bmp")
 {
-    std::cerr << '[' << origin_filename << ']';
     std::ostringstream filename_stream;
     filename_stream << origin_filename << ".";
     if(width != 0)
     {
         filename_stream.width(width);
+        filename_stream.fill('0');
     }
     filename_stream << number << postfix;
-    std::cerr << "[" << filename_stream.str().c_str() << "]\n";
     if(filename_stream)
         return filename_stream.str();
 
@@ -58,25 +57,25 @@ void imgScrollDown(
             int             width,
             int             height,
             int             channels,
-            int             height_offset
+            int             height_offset,
+            int             widthstep = 0
             )
 {
-    std::cerr << width << ' ' << height << ' ' << channels << '\n';
+    if(widthstep == 0)
+        widthstep = width * channels;
     int offset = height_offset;
     for (int i=0;i<height;i++)
       for (int j=0;j<width;j++)
         for (int k=0;k<channels;k++)
         {
-            int idpre = (i-offset)*width*channels+j*channels+k;
-            int id = i*width*channels+j*channels+k;
-            std::cerr << id << ' ';
-            if (idpre<0||idpre>height*width*channels-1)
+            int idpre = (i-offset)*widthstep+j*channels+k;
+            int id = i*widthstep+j*channels+k;
+            if (idpre<0||idpre>height*widthstep-1)
               dst[id] = 255;
             else
               dst[id] = src[idpre];
         }
 
-    std::cerr << "\nFinished\n";
 }
 
 // Count the width to represent x in decimal base
@@ -101,11 +100,10 @@ std::string strGetFileName(const std::string& src)
 int main ( int argc, char *argv[] )
 {
     std::cerr << "Image sequence generator v0.0.1\n" 
-                 "Used only in HTM07 project.\n"
-                 "\n";
+                 "Used only in HTM07 project.\n";
     if(argc != 2)
     {
-        std::cerr << "Usage: " << argv[0] << " <source file>\n";
+        std::cerr << "\nUsage: " << argv[0] << " <source file>\n";
     }
 
     // Get current full path (no final '/')
@@ -160,14 +158,11 @@ int main ( int argc, char *argv[] )
                                         origin->nChannels);
     std::string src_filename = strGetFileName(src_relpath);
     int number_width = decWidth(2*height);
-    std::cerr << number_width << '\n';
-    std::cerr << "{" << src_filename.c_str() << "}\n";
     for(int i = -height; i < height; ++i)
     {
         imgScrollDown(origin->imageData, img_this->imageData, 
                     origin_size.width, origin_size.height,
-                    origin->nChannels, i);
-        std::cerr << "{" << src_filename.c_str() << "}\n";
+                    origin->nChannels, i, origin->widthStep);
         std::string imgfilename = imageFilename(src_filename.c_str(), 
                     i+height, number_width);
         imgfilename = tgt_dir + imgfilename;
@@ -178,5 +173,7 @@ int main ( int argc, char *argv[] )
     listfile.close();
     cvReleaseImage(&img_this);
     cvReleaseImage(&origin);
+
+    std::cerr << "Done.\n";
     return 0;
 }		
