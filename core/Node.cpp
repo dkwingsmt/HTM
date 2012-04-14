@@ -41,14 +41,10 @@ NodeT::NodeT(LayerT *layer, id_t node_id, const VecT *input_std_size) :
     SpaceT *nodes_space = _Layer->_NodesSpace;
     SpaceT *input_space = _Layer->_InputSpace;
     SpaceT *output_space = _Layer->_OutputSpace;
-    //TOCLR:std::cerr << "D" << dims;
     for(size_t i = 0; i < dims; ++i)
     {
-        //TOCLR:std::cerr << "d" << i;
-        //TOCLR:std::cerr << "f";
         input_start_pos.max[i] = nodes_space->getTotalCoord(_Id, i) 
                                     * input_std_size->max[i];
-        //TOCLR:std::cerr << "b";
         input_node_size.max[i] = __minBinary<size_t>(
                     input_std_size->max[i],
                     input_space->getSelfLength(i) - input_start_pos.max[i]);
@@ -65,7 +61,6 @@ NodeT::NodeT(LayerT *layer, id_t node_id, const VecT *input_std_size) :
 
     _Sp = new SpatialPoolerT(_InputSpace->getSelfSize());
     assert(_Sp && "Allocation failed.");
-    //TOCLR:std::cerr << "InputSize" << _InputSpace->getSelfSize() << std::endl;
     _InputData = new data_t[_InputSpace->getSelfSize()];
     assert(_InputData && "Allocation failed.");
 
@@ -73,8 +68,6 @@ NodeT::NodeT(LayerT *layer, id_t node_id, const VecT *input_std_size) :
     delete[] input_node_size.max;
     delete[] output_start_pos.max;
     delete[] output_node_size.max;
-    //TOCLR:std::cerr << "\nthis" << this;
-//    std::cerr << "\nIS" << this->_InputSpace << std::endl;
 }
 
 NodeT::~NodeT()
@@ -87,10 +80,6 @@ NodeT::~NodeT()
 
 void NodeT::nodeExpose(const data_t *input)
 {
-    //TOCLR:std::cerr << "NowIS "<< this->_InputSpace << std::endl;
-//    _Layer->p();
-//    std::cerr << "NowIS "<< this->_InputSpace << std::endl;
-//    _Layer->p();
     copyFromSpaceToSubSpace(input, _InputData, _InputSpace, _Layer);
     size_t input_size = _InputSpace->getSelfSize();
     // Transform complete input data to data block

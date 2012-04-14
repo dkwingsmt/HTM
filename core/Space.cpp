@@ -69,18 +69,9 @@ size_t SpaceT::getTotalSize() const
 {
     return __idProjector[max.dims];
 }
-//TOCLR:void printpos(const size_t *array, size_t size)
-//{
-//    for(size_t i = 0; i < size; ++i)
-//        std::cerr << array[i];
-//    std::cerr << std::endl;
-//}
 
 size_t SpaceT::getSelfSize() const
 {
-    //TOCLR:std::cerr << std::endl;
-    //TOCLR:printpos(__idProjector, max.dims+1);
-    //TOCLR:printpos(_SelfidProjector, max.dims+1);
     if(!isDerived())
         return __idProjector[max.dims];
     else
@@ -128,7 +119,6 @@ SpaceT::SpaceT(const VecT* start_pos, const VecT* size,SpaceT * origin)
         __idProjector[i+1] = __idProjector[i] * max.max[i]; 
         this->_StartPos.max[i] = start_pos->max[i];
         _SelfidProjector[i+1] = _SelfidProjector[i] * _SelfMax[i];
-        //TOCLR:std::cerr << "Self"<< _SelfidProjector[i+1];
     }
     _Origin = origin;//origin here is not totally copied, just a ->
 }
@@ -145,19 +135,11 @@ bool copyFromSpaceToSubSpace(const data_t * source, data_t * dest, const SpaceT 
         endpos[i]=startpos[i]+originspace->_SelfMax[i];
         nowpos[i]=startpos[i];
     }
-    //TOCLR:std::cerr<< "Begin:\n";
-//    printpos(startpos,dimension);
-//    printpos(endpos,dimension);
-//    printpos(nowpos,dimension);
     int countdes = 0;
     int countsource = 0;
     while(1)
     {
-        //TOCLR:std::cerr << "===\n";
         bool tempflag = true;
-//TOCLR        printpos(startpos,dimension);
-//        printpos(endpos,dimension);
-//        printpos(nowpos,dimension);
         for(int i = 0; i < dimension&&tempflag; ++i)
         {
             if(nowpos[i]+1<endpos[i])
@@ -196,8 +178,6 @@ bool copyFromSpaceToSubSpace(const data_t * source, data_t * dest, const SpaceT 
         {
             countsource += nowpos[i]*originspace->__idProjector[i];
         }
-        //TOCLR std::cerr << "Des" << countdes << " Src" << countsource << '\n';
-
         dest[countdes] = source[countsource];
         countdes++;
     }

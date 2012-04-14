@@ -63,7 +63,6 @@ int main ( int argc, char *argv[] )
     while(1)
     {
         system("read n1");
-        std::cerr << "Once.\n";
         std::getline(std::cin, infilename);
         if(!std::cin)
             break;
@@ -147,17 +146,14 @@ void outputGnuplot(const LayerT *layer)
 
     size_t xmax = nodes_space->getTotalLength(0);
     size_t ymax = nodes_space->getTotalLength(1);
-    std::cerr << xmax << " " << ymax << std::endl;
     std::cout << "splot [0:" << xmax << "] [0:" << ymax << "] [0:10] "
               << " '-' " << std::endl;
-    std::cerr << "[" << nodenum << "]\n";
     for(size_t i = 0; i < nodenum; ++i)
     {
         size_t x = nodes_space->getTotalCoord(i, 0);
         size_t y = nodes_space->getTotalCoord(i, 1);
         size_t centernum = is.getLayerNodeCenterNum(layer, i);
         std::cout << x << ' ' << y << ' ' << centernum << std::endl;
-        std::cerr << x << ' ' << y << ' ' << centernum << std::endl;
     }
 }
 
