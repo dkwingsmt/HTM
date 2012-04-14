@@ -37,6 +37,7 @@ std::string strip(const std::string& instr, const char* charset)
 void loadImage(const std::string& filename, data_t **p_out);
 void initializeGnuplot(const LayerT *layer);
 void outputGnuplot(const LayerT *layer);
+void displayGnuplot();
 
 //   Load picture sequence by reading continuous file name of pictures
 // ended by '\n'. 
@@ -81,6 +82,7 @@ int main ( int argc, char *argv[] )
         layer1->expose(input_data);
         outputGnuplot(layer1);
     }
+    displayGnuplot();
     while(1);
 
     return 0;
@@ -157,5 +159,9 @@ void outputGnuplot(const LayerT *layer)
         std::cout << x << ' ' << y << ' ' << centernum << std::endl;
         std::cerr << x << ' ' << y << ' ' << centernum << std::endl;
     }
+}
+
+void displayGnuplot()
+{
     std::cout << "e" << std::endl;
 }

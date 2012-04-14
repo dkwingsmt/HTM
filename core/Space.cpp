@@ -26,13 +26,17 @@ SpaceT::SpaceT(const VecT *max)
     this->max.dims = max->dims;
     this->max.max = new size_t[this->max.dims];
     assert(this->max.max);
-    this->__idProjector= new size_t[this->max.dims];
+    this->__idProjector= new size_t[this->max.dims+1];
     assert(this->__idProjector);
     __idProjector[0]=1;
+    this->_SelfidProjector= new size_t[this->max.dims+1];
+    assert(this->_SelfidProjector);
+    _SelfidProjector[0]=1;
     this->_SelfMax = new size_t[this->max.dims];
     for(int i = 0;i < this->max.dims; ++i)
     {
         __idProjector[i+1] = __idProjector[i] * max->max[i]; 
+        _SelfidProjector[i+1] = _SelfidProjector[i] * max->max[i];
         this->max.max[i] = max->max[i];
         _SelfMax[i] = max->max[i];
     }
@@ -65,8 +69,18 @@ size_t SpaceT::getTotalSize() const
 {
     return __idProjector[max.dims];
 }
+//TOCLR:void printpos(const size_t *array, size_t size)
+//{
+//    for(size_t i = 0; i < size; ++i)
+//        std::cerr << array[i];
+//    std::cerr << std::endl;
+//}
+
 size_t SpaceT::getSelfSize() const
 {
+    //TOCLR:std::cerr << std::endl;
+    //TOCLR:printpos(__idProjector, max.dims+1);
+    //TOCLR:printpos(_SelfidProjector, max.dims+1);
     if(!isDerived())
         return __idProjector[max.dims];
     else
@@ -98,21 +112,23 @@ SpaceT::SpaceT(const VecT* start_pos, const VecT* size,SpaceT * origin)
     assert(this->max.max);
     this->_StartPos.max = new size_t[max.dims];
     assert(this->_StartPos.max);
-    this->__idProjector= new size_t[this->max.dims];
+    this->__idProjector= new size_t[this->max.dims+1];
     assert(this->__idProjector);
     this->_SelfMax = new size_t[max.dims];
     __idProjector[0]=1;
     this->_SelfMax = new size_t[max.dims];
     _SelfMax[0]=1;
-    this->_SelfidProjector = new size_t[this->max.dims];
+    this->_SelfidProjector = new size_t[this->max.dims+1];
     assert(this->_SelfidProjector);
+    _SelfidProjector[0] = 1;
     for(int i = 0;i < max.dims; ++i)
     {
         this->_SelfMax[i]=size->max[i];
-        __idProjector[i+1] = __idProjector[i] * max.max[i]; 
         this->max.max[i] = origin->max.max[i];
+        __idProjector[i+1] = __idProjector[i] * max.max[i]; 
         this->_StartPos.max[i] = start_pos->max[i];
         _SelfidProjector[i+1] = _SelfidProjector[i] * _SelfMax[i];
+        //TOCLR:std::cerr << "Self"<< _SelfidProjector[i+1];
     }
     _Origin = origin;//origin here is not totally copied, just a ->
 }
@@ -129,12 +145,19 @@ bool copyFromSpaceToSubSpace(const data_t * source, data_t * dest, const SpaceT 
         endpos[i]=startpos[i]+originspace->_SelfMax[i];
         nowpos[i]=startpos[i];
     }
+    //TOCLR:std::cerr<< "Begin:\n";
+//    printpos(startpos,dimension);
+//    printpos(endpos,dimension);
+//    printpos(nowpos,dimension);
     int countdes = 0;
     int countsource = 0;
     while(1)
     {
-        std::cerr << "===\n";
+        //TOCLR:std::cerr << "===\n";
         bool tempflag = true;
+//TOCLR        printpos(startpos,dimension);
+//        printpos(endpos,dimension);
+//        printpos(nowpos,dimension);
         for(int i = 0; i < dimension&&tempflag; ++i)
         {
             if(nowpos[i]+1<endpos[i])
@@ -173,7 +196,8 @@ bool copyFromSpaceToSubSpace(const data_t * source, data_t * dest, const SpaceT 
         {
             countsource += nowpos[i]*originspace->__idProjector[i];
         }
-        std::cerr << "Des" << countdes << " Src" << countsource << '\n';
+        //TOCLR std::cerr << "Des" << countdes << " Src" << countsource << '\n';
+
         dest[countdes] = source[countsource];
         countdes++;
     }

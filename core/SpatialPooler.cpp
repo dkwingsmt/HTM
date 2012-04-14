@@ -46,7 +46,9 @@ void SpatialPoolerT::spLearn(const data_t *input_data,size_t data_size)
     bool neverAppeared = true;
     for (int i=0;i<_PatternList->size();i++)
     {
-       if (computeDistance(input_data,_PatternList->getPattern(i),data_size,_PatternList->getPatternSize())<=_MaxDist)
+        int dis = computeDistance(input_data,_PatternList->getPattern(i),data_size,_PatternList->getPatternSize());
+        std::cerr << "[" << dis << "]" ;
+       if (dis<=_MaxDist)
        {
            neverAppeared = false;
       //     addTimeLine(preInputID,i);

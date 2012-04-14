@@ -71,7 +71,7 @@ public:
     // of its sp. Returns true if completed.
     bool learned() const                { return _Learned;  }
 
-    void p() const  {std::cerr << "NodeIS "<<_InputSpace << std::endl;}
+    //TOCLR:void p() const  {std::cerr << "NodeIS "<<_InputSpace << std::endl;}
 
 private:
     data_t *_outputData()               { return _Layer->_Output;   }

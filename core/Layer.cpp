@@ -16,10 +16,10 @@
 #include <iostream>
 
 namespace htm07 {
-    void LayerT::p() const{
-        for(int i = 0; i < numNode(); ++i)
-          _Nodes[i]->p();
-    }
+    //TOCLR:void LayerT::p() const{
+//        for(int i = 0; i < numNode(); ++i)
+//          _Nodes[i]->p();
+//    }
 
 LayerT::LayerT(const VecT *input_size, const VecT *node_size) :
     _NumNodeLearned(0)
@@ -53,7 +53,7 @@ LayerT::LayerT(const VecT *input_size, const VecT *node_size) :
     assert(_Output && "Allocation failed.");
 
     _NumNode = _NodesSpace->getTotalSize();
-    std::cerr << "NumNode "<< _NumNode;
+    //TOCLR:std::cerr << "NumNode "<< _NumNode;
     _Nodes = new NodeT *[numNode()];
     assert(_Nodes && "Allocation failed.");
     for(size_t i = 0; i < numNode(); ++i)
@@ -81,8 +81,8 @@ void LayerT::expose(const data_t *input_data)
 {
     for(size_t i = 0; i < numNode(); ++i)
     {
-        std::cerr << "NumNode" << numNode() << "\n";
-        std::cerr << "i" << i << "\n";
+        //TOCLR:std::cerr << "NumNode" << numNode() << "\n";
+        //TOCLR:std::cerr << "i" << i << "\n";
         _Nodes[i]->nodeExpose(input_data);
     }
 

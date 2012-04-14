@@ -38,7 +38,7 @@ public:
     const SpaceT *inputSpace() const    { return _InputSpace;   }
     const SpaceT *nodesSpace() const    { return _NodesSpace;   }
 
-    void p() const;
+    //TOCLR:void p() const;
 private:
     //   Called only by NodeT. 
     //   NodeT plz make sure only call it once, for LayerT don't remember
