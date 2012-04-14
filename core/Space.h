@@ -26,7 +26,7 @@ class SpaceT
     friend class IntrospectionT;
 public:
     // New SpaceT from a given VecT as size of each dimensions
-    SpaceT(const VecT *max);
+    SpaceT(const VecT *size);
     // A subspace from an exsisted space within the given region
     SpaceT(const VecT* start_pos, const VecT* size,SpaceT * origin);
     ~SpaceT();
