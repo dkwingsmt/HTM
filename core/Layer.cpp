@@ -13,8 +13,6 @@
 #include "Layer.h"
 #include "Node.h"
 
-#include <iostream>
-
 namespace htm07 {
 
 LayerT::LayerT(const VecT *input_size, const VecT *node_size) :
