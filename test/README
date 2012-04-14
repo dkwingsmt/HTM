@@ -1,0 +1,19 @@
+  Programs to test if the core library is correctly working.
+
+testSpLearn
+
+    DISCRIPTION
+        Contains one layer. Give a list of learning data and output the 
+      number of quantization centers of each node.
+
+    USAGE
+        Once start, it requests input from stdin, which is a list of image
+      file name seperated by newline('\n'), and for each round, output 
+      plot command of gnuplot to stdout which plots the distribution of 
+      the number of quantization centers of each node. 
+        So you may want to use utility/image_sequence to generate a continuous
+      sequence of image and then use: 
+
+      ./testSpLearn < ../utility/img_seq/list.txt  | gnuplot
+
+      to make a test.
