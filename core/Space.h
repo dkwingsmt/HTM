@@ -49,53 +49,51 @@ private:
     VecT _StartPos;
     SpaceT *_Origin;
     size_t *_SelfIdProjector;
-    friend bool copyFromSpaceToSubSpace(const data_t * source, data_t * dest, const SpaceT * originspace, LayerT *layer);
+    friend bool copyFromSpaceToSubSpace(const data_t * source, data_t * dest, const SpaceT * originspace);
 };
 
 coord_t SpaceT::getTotalCoord(id_t id, size_t dim) const
 {
-    return ((id/_IdProjector[dim]) % getTotalLength(id));
+    return ((id/_IdProjector[dim]) % getTotalLength(dim));
 }
 
 coord_t SpaceT::getTotalLength(size_t dim) const
 {
-    if(dim <= _TotalMax.dims)
+    if(dim < _TotalMax.dims)
         return _TotalMax.max[dim];
-    else
-        return -1;//to be modified
+    assert(0);
+    return -1;//to be modified
 }
 
 coord_t SpaceT::getSelfLength(size_t dim) const
 {
-    if(dim <= _TotalMax.dims)
+    if(dim < _TotalMax.dims)
     {
         if(isDerived())  
             return _SelfMax[dim];
         else
             return _TotalMax.max[dim];
     }
-    else
-        return -1;//to be modified
+    assert(0);
+    return -1;//to be modified
 }
-
 size_t SpaceT::getTotalSize() const
 {
-    return _IdProjector[_TotalMax.dims+1];
+    return _IdProjector[_TotalMax.dims];
 }
 
 size_t SpaceT::getSelfSize() const
 {
     if(!isDerived())
-        return _IdProjector[_TotalMax.dims+1];
+        return _IdProjector[_TotalMax.dims];
     else
-        return _SelfIdProjector[_TotalMax.dims+1];
+        return _SelfIdProjector[_TotalMax.dims];
 }
 
 bool copyFromSpaceToSubSpace(
             const data_t * source, 
             data_t * dest, 
-            const SpaceT * originspace,
-            LayerT *layer);
+            const SpaceT * originspace);
 
 }   // namespace htm07
 

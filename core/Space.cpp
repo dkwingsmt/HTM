@@ -75,14 +75,14 @@ SpaceT::SpaceT(const VecT* start_pos, const VecT* size,SpaceT * origin)
     {
         this->_SelfMax[i]=size->max[i];
         _TotalMax.max[i] = origin->_TotalMax.max[i];
-        this->_StartPos.max[i] = start_pos->max[i];
         _IdProjector[i+1] = _IdProjector[i] * _TotalMax.max[i]; 
+        this->_StartPos.max[i] = start_pos->max[i];
         _SelfIdProjector[i+1] = _SelfIdProjector[i] * _SelfMax[i];
     }
     _Origin = origin;//origin here is not totally copied, just a ->
 }
 
-bool copyFromSpaceToSubSpace(const data_t * source, data_t * dest, const SpaceT * originspace, LayerT *layer)
+bool copyFromSpaceToSubSpace(const data_t * source, data_t * dest, const SpaceT * originspace)
 {
     size_t dimension = originspace->getDimension();
     size_t * startpos = new size_t[dimension];
