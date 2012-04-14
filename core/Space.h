@@ -33,7 +33,7 @@ public:
 
     coord_t getTotalCoord(id_t id, size_t dim) const
     {
-        return ((id/__idProjector[dim]) % getTotalLength(dim));
+        return ((id/_IdProjector[dim]) % getTotalLength(dim));
     }
     coord_t getTotalLength(size_t id) const;
     coord_t getSelfLength(id_t id) const;
@@ -49,10 +49,10 @@ public:
 private:
     VecT max;
     size_t *_SelfMax;
-    size_t *__idProjector;
+    size_t *_IdProjector;
     VecT _StartPos;
     SpaceT *_Origin;
-    size_t *_SelfidProjector;
+    size_t *_SelfIdProjector;
     friend bool copyFromSpaceToSubSpace(const data_t * source, data_t * dest, const SpaceT * originspace, LayerT *layer);
 };
 
