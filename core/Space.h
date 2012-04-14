@@ -45,9 +45,9 @@ public:
                      SpaceT **subspace);
 
     bool isDerived() const{return !_Origin;}
-    size_t getDimension() const {return max.dims;}
+    size_t getDimension() const {return _TotalMax.dims;}
 private:
-    VecT max;
+    VecT _TotalMax;
     size_t *_SelfMax;
     size_t *_IdProjector;
     VecT _StartPos;

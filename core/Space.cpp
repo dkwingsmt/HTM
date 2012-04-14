@@ -23,21 +23,21 @@ namespace htm07 {
 
 SpaceT::SpaceT(const VecT *size)
 {
-    this->max.dims = size->dims;
-    this->max.max = new size_t[this->max.dims];
-    assert(this->max.max);
-    this->_IdProjector= new size_t[this->max.dims+1];
+    _TotalMax.dims = size->dims;
+    _TotalMax.max = new size_t[_TotalMax.dims];
+    assert(_TotalMax.max);
+    this->_IdProjector= new size_t[_TotalMax.dims+1];
     assert(this->_IdProjector);
     _IdProjector[0]=1;
-    this->_SelfIdProjector= new size_t[this->max.dims+1];
+    this->_SelfIdProjector= new size_t[_TotalMax.dims+1];
     assert(this->_SelfIdProjector);
     _SelfIdProjector[0]=1;
-    this->_SelfMax = new size_t[this->max.dims];
-    for(int i = 0;i < this->max.dims; ++i)
+    this->_SelfMax = new size_t[_TotalMax.dims];
+    for(int i = 0;i < _TotalMax.dims; ++i)
     {
         _IdProjector[i+1] = _IdProjector[i] * size->max[i]; 
         _SelfIdProjector[i+1] = _SelfIdProjector[i] * size->max[i];
-        this->max.max[i] = size->max[i];
+        _TotalMax.max[i] = size->max[i];
         _SelfMax[i] = size->max[i];
     }
     _Origin=NULL;
@@ -47,35 +47,35 @@ SpaceT::SpaceT(const VecT *size)
 
 coord_t SpaceT::getTotalLength(id_t id) const
 {
-    if(id < this->max.dims)
-        return this->max.max[id];
+    if(id < _TotalMax.dims)
+        return _TotalMax.max[id];
     assert(0);
     return -1;//to be modified
 }
 
 coord_t SpaceT::getSelfLength(id_t id) const
 {
-    if(id < max.dims)
+    if(id < _TotalMax.dims)
     {
         if(isDerived())  
             return _SelfMax[id];
         else
-            return max.max[id];
+            return _TotalMax.max[id];
     }
     assert(0);
     return -1;//to be modified
 }
 size_t SpaceT::getTotalSize() const
 {
-    return _IdProjector[max.dims];
+    return _IdProjector[_TotalMax.dims];
 }
 
 size_t SpaceT::getSelfSize() const
 {
     if(!isDerived())
-        return _IdProjector[max.dims];
+        return _IdProjector[_TotalMax.dims];
     else
-        return _SelfIdProjector[max.dims];
+        return _SelfIdProjector[_TotalMax.dims];
 }
 
 bool SpaceT::getSubSpace(const VecT* start_pos, const VecT* size, 
@@ -88,7 +88,7 @@ bool SpaceT::getSubSpace(const VecT* start_pos, const VecT* size,
 }
 SpaceT::~SpaceT()
 {
-    delete []max.max;
+    delete []_TotalMax.max;
     delete []_StartPos.max;
     delete []_IdProjector;
     delete []_SelfMax;
@@ -97,26 +97,26 @@ SpaceT::~SpaceT()
 SpaceT::SpaceT(const VecT* start_pos, const VecT* size,SpaceT * origin)
 {
     assert(size->dims==start_pos->dims);
-    this->max.dims = origin->max.dims;
+    _TotalMax.dims = origin->_TotalMax.dims;
     this->_StartPos.dims = size->dims;
-    this->max.max = new size_t[max.dims];
-    assert(this->max.max);
-    this->_StartPos.max = new size_t[max.dims];
+    _TotalMax.max = new size_t[_TotalMax.dims];
+    assert(_TotalMax.max);
+    this->_StartPos.max = new size_t[_TotalMax.dims];
     assert(this->_StartPos.max);
-    this->_IdProjector= new size_t[this->max.dims+1];
+    this->_IdProjector= new size_t[_TotalMax.dims+1];
     assert(this->_IdProjector);
-    this->_SelfMax = new size_t[max.dims];
+    this->_SelfMax = new size_t[_TotalMax.dims];
     _IdProjector[0]=1;
-    this->_SelfMax = new size_t[max.dims];
+    this->_SelfMax = new size_t[_TotalMax.dims];
     _SelfMax[0]=1;
-    this->_SelfIdProjector = new size_t[this->max.dims+1];
+    this->_SelfIdProjector = new size_t[_TotalMax.dims+1];
     assert(this->_SelfIdProjector);
     _SelfIdProjector[0] = 1;
-    for(int i = 0;i < max.dims; ++i)
+    for(int i = 0;i < _TotalMax.dims; ++i)
     {
         this->_SelfMax[i]=size->max[i];
-        this->max.max[i] = origin->max.max[i];
-        _IdProjector[i+1] = _IdProjector[i] * max.max[i]; 
+        _TotalMax.max[i] = origin->_TotalMax.max[i];
+        _IdProjector[i+1] = _IdProjector[i] * _TotalMax.max[i]; 
         this->_StartPos.max[i] = start_pos->max[i];
         _SelfIdProjector[i+1] = _SelfIdProjector[i] * _SelfMax[i];
     }
