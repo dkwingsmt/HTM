@@ -123,7 +123,7 @@ SpaceT::SpaceT(const VecT* start_pos, const VecT* size,SpaceT * origin)
     _Origin = origin;//origin here is not totally copied, just a ->
 }
 
-bool copyFromSpaceToSubSpace(const data_t * source, data_t * dest, const SpaceT * originspace, LayerT *layer)
+bool copyFromSpaceToSubSpace(const data_t * source, data_t * dest, const SpaceT * originspace)
 {
     size_t dimension = originspace->getDimension();
     size_t * startpos = new size_t[dimension];

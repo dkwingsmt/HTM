@@ -80,7 +80,7 @@ NodeT::~NodeT()
 
 void NodeT::nodeExpose(const data_t *input)
 {
-    copyFromSpaceToSubSpace(input, _InputData, _InputSpace, _Layer);
+    copyFromSpaceToSubSpace(input, _InputData, _InputSpace);
     size_t input_size = _InputSpace->getSelfSize();
     // Transform complete input data to data block
     if(!learned())

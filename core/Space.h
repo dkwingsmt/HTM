@@ -53,14 +53,13 @@ private:
     VecT _StartPos;
     SpaceT *_Origin;
     size_t *_SelfIdProjector;
-    friend bool copyFromSpaceToSubSpace(const data_t * source, data_t * dest, const SpaceT * originspace, LayerT *layer);
+    friend bool copyFromSpaceToSubSpace(const data_t * source, data_t * dest, const SpaceT * originspace);
 };
 
 bool copyFromSpaceToSubSpace(
             const data_t * source, 
             data_t * dest, 
-            const SpaceT * originspace,
-            LayerT *layer);
+            const SpaceT * originspace);
 
 }   // namespace htm07
 
