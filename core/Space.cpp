@@ -28,7 +28,7 @@ SpaceT::SpaceT(const VecT *size)
     assert(_SelfMax);
     _StartPos = new size_t[getDimension()];
     assert(_StartPos);
-    for(int i = 0;i < getDimension(); ++i)
+    for(size_t i = 0;i < getDimension(); ++i)
     {
         _TotalIdProjector[i+1] = _TotalIdProjector[i] * size->max[i]; 
         _SelfIdProjector[i+1] = _SelfIdProjector[i] * size->max[i];
@@ -72,7 +72,7 @@ SpaceT::SpaceT(const VecT* start_pos, const VecT* size,SpaceT * origin)
     _SelfIdProjector = new size_t[getDimension()+1];
     assert(_SelfIdProjector);
     _SelfIdProjector[0] = 1;
-    for(int i = 0;i < getDimension(); ++i)
+    for(size_t i = 0;i < getDimension(); ++i)
     {
         _SelfMax[i]=size->max[i];
         _TotalMax[i] = origin->_TotalMax[i];
@@ -89,7 +89,7 @@ bool copyFromSpaceToSubSpace(const data_t * source, data_t * dest, const SpaceT 
     size_t * startpos = new size_t[dimension];
     size_t * endpos = new size_t[dimension];
     size_t * nowpos = new size_t[dimension];
-    for(int i=0;i<dimension;++i)
+    for(size_t i=0;i<dimension;++i)
     {
         startpos[i]=originspace->getStartPos(i);
         endpos[i]=startpos[i]+originspace->getLength(i);
@@ -100,7 +100,7 @@ bool copyFromSpaceToSubSpace(const data_t * source, data_t * dest, const SpaceT 
     while(1)
     {
         bool tempflag = true;
-        for(int i = 0; i < dimension&&tempflag; ++i)
+        for(size_t i = 0; i < dimension&&tempflag; ++i)
         {
             if(nowpos[i]+1<endpos[i])
             {
@@ -109,7 +109,7 @@ bool copyFromSpaceToSubSpace(const data_t * source, data_t * dest, const SpaceT 
             }
             else
             {
-                int tempaddi = i+1; 
+                size_t tempaddi = i+1; 
                 while(1)
                 {
                     if(tempaddi == dimension)
@@ -118,7 +118,7 @@ bool copyFromSpaceToSubSpace(const data_t * source, data_t * dest, const SpaceT 
                     {
                         nowpos[tempaddi]++;
                         tempflag = false;
-                        for(int k = 0 ;k < tempaddi ; ++k)
+                        for(size_t k = 0 ;k < tempaddi ; ++k)
                         {
                             nowpos[k] = startpos[k];
                         }//TODO(lrc):poor algorithm
@@ -135,7 +135,7 @@ bool copyFromSpaceToSubSpace(const data_t * source, data_t * dest, const SpaceT 
           break;
         countsource = 0;
         //TODO(lrc):very very poor algorithm, left to be modified
-        for(int i=0;i<dimension;++i)
+        for(size_t i=0;i<dimension;++i)
         {
             countsource += nowpos[i]*originspace->getTotalIdProj(i);
         }
@@ -145,5 +145,8 @@ bool copyFromSpaceToSubSpace(const data_t * source, data_t * dest, const SpaceT 
     delete []nowpos;
     delete []endpos;
     delete []startpos;
+
+    return true;
 }
+
 }   // namespace htm07
