@@ -34,7 +34,7 @@ public:
     inline coord_t getLength(size_t dim) const;
     inline size_t getSize() const;
     inline coord_t getCoord(id_t id, size_t dim) const;
-    size_t getDimension() const {return _Dims;}
+    inline size_t getDimension() const {return _Dims;}
 
     inline coord_t getTotalCoord(id_t id, size_t dim) const;
     inline coord_t getTotalLength(size_t dim) const;
@@ -57,33 +57,29 @@ private:
 
 coord_t SpaceT::getCoord(id_t id, size_t dim) const
 {
+    assert(dim < getDimension() && "Dimension exceeded limit.");
     return ((id/_SelfIdProjector[dim]) % getLength(dim));
 }
 
 coord_t SpaceT::getTotalCoord(id_t id, size_t dim) const
 {
+    assert(dim < getDimension() && "Dimension exceeded limit.");
     return ((id/_IdProjector[dim]) % getTotalLength(dim));
 }
 
 coord_t SpaceT::getTotalLength(size_t dim) const
 {
-    if(dim < getDimension())
-        return _TotalMax[dim];
-    assert(0);
-    return -1;//to be modified
+    assert(dim < getDimension() && "Dimension exceeded limit.");
+    return _TotalMax[dim];
 }
 
 coord_t SpaceT::getLength(size_t dim) const
 {
-    if(dim < getDimension())
-    {
-        if(isDerived())  
-            return _SelfMax[dim];
-        else
-            return _TotalMax[dim];
-    }
-    assert(0);
-    return -1;//to be modified
+    assert(dim < getDimension() && "Dimension exceeded limit.");
+    if(isDerived())  
+        return _SelfMax[dim];
+    else
+        return _TotalMax[dim];
 }
 size_t SpaceT::getTotalSize() const
 {
