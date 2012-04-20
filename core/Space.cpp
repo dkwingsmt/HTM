@@ -18,22 +18,25 @@ SpaceT::SpaceT(const VecT *size)
     _Dims = size->dims;
     _TotalMax = new size_t[getDimension()];
     assert(_TotalMax);
-    this->_IdProjector= new size_t[getDimension()+1];
-    assert(this->_IdProjector);
+    _IdProjector= new size_t[getDimension()+1];
+    assert(_IdProjector);
     _IdProjector[0]=1;
-    this->_SelfIdProjector= new size_t[getDimension()+1];
-    assert(this->_SelfIdProjector);
+    _SelfIdProjector= new size_t[getDimension()+1];
+    assert(_SelfIdProjector);
     _SelfIdProjector[0]=1;
-    this->_SelfMax = new size_t[getDimension()];
+    _SelfMax = new size_t[getDimension()];
+    assert(_SelfMax);
+    _StartPos = new size_t[getDimension()];
+    assert(_StartPos);
     for(int i = 0;i < getDimension(); ++i)
     {
         _IdProjector[i+1] = _IdProjector[i] * size->max[i]; 
         _SelfIdProjector[i+1] = _SelfIdProjector[i] * size->max[i];
         _TotalMax[i] = size->max[i];
         _SelfMax[i] = size->max[i];
+        _StartPos[i] = 0;
     }
     _IsDerived = false;
-    this->_StartPos = NULL;
 }
 
 bool SpaceT::getSubSpace(const VecT* start_pos, const VecT* size, 
@@ -58,23 +61,23 @@ SpaceT::SpaceT(const VecT* start_pos, const VecT* size,SpaceT * origin)
     _Dims = origin->getDimension();
     _TotalMax = new size_t[getDimension()];
     assert(_TotalMax);
-    this->_StartPos = new size_t[getDimension()];
-    assert(this->_StartPos);
-    this->_IdProjector= new size_t[getDimension()+1];
-    assert(this->_IdProjector);
-    this->_SelfMax = new size_t[getDimension()];
+    _StartPos = new size_t[getDimension()];
+    assert(_StartPos);
+    _IdProjector= new size_t[getDimension()+1];
+    assert(_IdProjector);
+    _SelfMax = new size_t[getDimension()];
     _IdProjector[0]=1;
-    this->_SelfMax = new size_t[getDimension()];
+    _SelfMax = new size_t[getDimension()];
     _SelfMax[0]=1;
-    this->_SelfIdProjector = new size_t[getDimension()+1];
-    assert(this->_SelfIdProjector);
+    _SelfIdProjector = new size_t[getDimension()+1];
+    assert(_SelfIdProjector);
     _SelfIdProjector[0] = 1;
     for(int i = 0;i < getDimension(); ++i)
     {
-        this->_SelfMax[i]=size->max[i];
+        _SelfMax[i]=size->max[i];
         _TotalMax[i] = origin->_TotalMax[i];
         _IdProjector[i+1] = _IdProjector[i] * _TotalMax[i]; 
-        this->_StartPos[i] = start_pos->max[i];
+        _StartPos[i] = start_pos->max[i];
         _SelfIdProjector[i+1] = _SelfIdProjector[i] * _SelfMax[i];
     }
     _IsDerived = true;
