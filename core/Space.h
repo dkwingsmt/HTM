@@ -76,10 +76,7 @@ coord_t SpaceT::getTotalLength(size_t dim) const
 coord_t SpaceT::getLength(size_t dim) const
 {
     assert(dim < getDimension() && "Dimension exceeded limit.");
-    if(isDerived())  
-        return _SelfMax[dim];
-    else
-        return _TotalMax[dim];
+    return _SelfMax[dim];
 }
 size_t SpaceT::getTotalSize() const
 {
@@ -88,10 +85,7 @@ size_t SpaceT::getTotalSize() const
 
 size_t SpaceT::getSize() const
 {
-    if(!isDerived())
-        return _IdProjector[getDimension()];
-    else
-        return _SelfIdProjector[getDimension()];
+    return _SelfIdProjector[getDimension()];
 }
 
 bool copyFromSpaceToSubSpace(
