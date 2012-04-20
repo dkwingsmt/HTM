@@ -30,18 +30,23 @@ public:
     SpaceT(const VecT* start_pos, const VecT* size,SpaceT * origin);
     ~SpaceT();
 
-    inline coord_t getTotalCoord(id_t id, size_t dim) const;
-    inline coord_t getTotalLength(size_t dim) const;
     inline coord_t getLength(size_t dim) const;
-    inline size_t getTotalSize() const;
     inline size_t getSize() const;
+    inline coord_t getCoord(id_t id, size_t dim) const;
+
+    SpaceT *getOriginSpace()             { return isDerived() ? _Origin : this;}
+    const SpaceT *getOriginSpace() const { return isDerived() ? _Origin : this;}
 
     bool getSubSpace(const VecT* start_pos, const VecT* size, 
                      SpaceT **subspace);
 
-    bool isDerived() const      {return !_Origin;}
+    bool isDerived() const      {return _Origin;}
     size_t getDimension() const {return _TotalMax.dims;}
 private:
+    inline coord_t getTotalCoord(id_t id, size_t dim) const;
+    inline coord_t getTotalLength(size_t dim) const;
+    inline size_t getTotalSize() const;
+
     VecT _TotalMax;
     size_t *_SelfMax;
     size_t *_IdProjector;
@@ -50,6 +55,11 @@ private:
     size_t *_SelfIdProjector;
     friend bool copyFromSpaceToSubSpace(const data_t * source, data_t * dest, const SpaceT * originspace);
 };
+
+coord_t SpaceT::getCoord(id_t id, size_t dim) const
+{
+    return ((id/_SelfIdProjector[dim]) % getLength(dim));
+}
 
 coord_t SpaceT::getTotalCoord(id_t id, size_t dim) const
 {

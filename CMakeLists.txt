@@ -8,7 +8,6 @@ SET ( CMAKE_BUILD_TYPE "Debug" )
 add_definitions("-O0")
 
 if( CMAKE_BUILD_TYPE MATCHES "Debug" )
-    message("Debug building.")
     add_definitions("-DDEBUG -g")
 elseif( CMAKE_BUILD_TYPE MATCHES "Release" )
     add_definitions("-DRELEASE")

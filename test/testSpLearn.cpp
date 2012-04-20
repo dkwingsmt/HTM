@@ -144,14 +144,14 @@ void outputGnuplot(const LayerT *layer)
     size_t nodenum = is.getLayerNodeNum(layer);
     const SpaceT *nodes_space = layer->nodesSpace();
 
-    size_t xmax = nodes_space->getTotalLength(0);
-    size_t ymax = nodes_space->getTotalLength(1);
+    size_t xmax = nodes_space->getOriginSpace()->getLength(0);
+    size_t ymax = nodes_space->getOriginSpace()->getLength(1);
     std::cout << "splot [0:" << xmax << "] [0:" << ymax << "] [0:10] "
               << " '-' " << std::endl;
     for(size_t i = 0; i < nodenum; ++i)
     {
-        size_t x = nodes_space->getTotalCoord(i, 0);
-        size_t y = nodes_space->getTotalCoord(i, 1);
+        size_t x = nodes_space->getOriginSpace()->getCoord(i, 0);
+        size_t y = nodes_space->getOriginSpace()->getCoord(i, 1);
         size_t centernum = is.getLayerNodeCenterNum(layer, i);
         std::cout << x << ' ' << y << ' ' << centernum << std::endl;
     }

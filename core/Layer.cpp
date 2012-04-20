@@ -43,10 +43,10 @@ LayerT::LayerT(const VecT *input_size, const VecT *node_size) :
     }
     _OutputSpace = new SpaceT(&output_space_max);
     assert(_OutputSpace && "Allocation failed.");
-    _Output = new data_t[_OutputSpace->getTotalSize()];
+    _Output = new data_t[_OutputSpace->getOriginSpace()->getSize()];
     assert(_Output && "Allocation failed.");
 
-    _NumNode = _NodesSpace->getTotalSize();
+    _NumNode = _NodesSpace->getOriginSpace()->getSize();
     _Nodes = new NodeT *[numNode()];
     assert(_Nodes && "Allocation failed.");
     for(size_t i = 0; i < numNode(); ++i)
