@@ -23,6 +23,7 @@ class LayerT;
 class SpaceT
 {
     friend class IntrospectionT;
+    friend bool copyFromSpaceToSubSpace(const data_t * source, data_t * dest, const SpaceT * originspace);
 public:
     // New SpaceT from a given VecT as size of each dimensions
     SpaceT(const VecT *size);
@@ -33,7 +34,7 @@ public:
     inline coord_t getLength(size_t dim) const;
     inline size_t getSize() const;
     inline coord_t getCoord(id_t id, size_t dim) const;
-    size_t getDimension() const {return _TotalMax.dims;}
+    size_t getDimension() const {return _Dims;}
 
     inline coord_t getTotalCoord(id_t id, size_t dim) const;
     inline coord_t getTotalLength(size_t dim) const;
@@ -45,13 +46,13 @@ public:
     // Returns if this space is a subspace of another one. True for a subspace.
     bool isDerived() const      {return _IsDerived;}
 private:
-    VecT _TotalMax;
+    size_t _Dims;
+    size_t *_TotalMax;
     size_t *_SelfMax;
     size_t *_IdProjector;
-    VecT _StartPos;
-    bool _IsDerived;
+    size_t *_StartPos;
     size_t *_SelfIdProjector;
-    friend bool copyFromSpaceToSubSpace(const data_t * source, data_t * dest, const SpaceT * originspace);
+    bool _IsDerived;
 };
 
 coord_t SpaceT::getCoord(id_t id, size_t dim) const
@@ -66,35 +67,35 @@ coord_t SpaceT::getTotalCoord(id_t id, size_t dim) const
 
 coord_t SpaceT::getTotalLength(size_t dim) const
 {
-    if(dim < _TotalMax.dims)
-        return _TotalMax.max[dim];
+    if(dim < getDimension())
+        return _TotalMax[dim];
     assert(0);
     return -1;//to be modified
 }
 
 coord_t SpaceT::getLength(size_t dim) const
 {
-    if(dim < _TotalMax.dims)
+    if(dim < getDimension())
     {
         if(isDerived())  
             return _SelfMax[dim];
         else
-            return _TotalMax.max[dim];
+            return _TotalMax[dim];
     }
     assert(0);
     return -1;//to be modified
 }
 size_t SpaceT::getTotalSize() const
 {
-    return _IdProjector[_TotalMax.dims];
+    return _IdProjector[getDimension()];
 }
 
 size_t SpaceT::getSize() const
 {
     if(!isDerived())
-        return _IdProjector[_TotalMax.dims];
+        return _IdProjector[getDimension()];
     else
-        return _SelfIdProjector[_TotalMax.dims];
+        return _SelfIdProjector[getDimension()];
 }
 
 bool copyFromSpaceToSubSpace(
