@@ -43,7 +43,7 @@ NodeT::NodeT(LayerT *layer, id_t node_id, const VecT *input_std_size) :
     SpaceT *output_space = _Layer->_OutputSpace;
     for(size_t i = 0; i < dims; ++i)
     {
-        input_start_pos.max[i] = nodes_space->getOriginSpace()->getCoord(_Id, i) 
+        input_start_pos.max[i] = nodes_space->getTotalCoord(_Id, i) 
                                     * input_std_size->max[i];
         input_node_size.max[i] = __minBinary<size_t>(
                     input_std_size->max[i],
@@ -51,8 +51,7 @@ NodeT::NodeT(LayerT *layer, id_t node_id, const VecT *input_std_size) :
         assert(input_node_size.max[i] > 0);
 
         // TODO(mt): How to determine the output size? (See Layer::Layer())
-        output_start_pos.max[i] = nodes_space->getOriginSpace()->
-                                  getCoord(_Id, i) * 4;
+        output_start_pos.max[i] = nodes_space->getTotalCoord(_Id, i) * 4;
         output_node_size.max[i] = 4;
     }
     _Layer->_InputSpace->getSubSpace(&input_start_pos, &input_node_size, 

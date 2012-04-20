@@ -133,7 +133,8 @@ bool copyFromSpaceToSubSpace(const data_t * source, data_t * dest, const SpaceT 
         if(tempflag == true)
           break;
         countsource = 0;
-        for(int i=0;i<dimension;++i)//TODO(lrc):very very poor algorithm, left to be modified
+        //TODO(lrc):very very poor algorithm, left to be modified
+        for(int i=0;i<dimension;++i)
         {
             countsource += nowpos[i]*originspace->_IdProjector[i];
         }

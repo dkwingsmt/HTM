@@ -7,11 +7,8 @@ SET ( CMAKE_BUILD_TYPE "Debug" )
 
 add_definitions("-O0")
 
-if( CMAKE_BUILD_TYPE MATCHES "Debug" )
-    add_definitions("-DDEBUG -g")
-elseif( CMAKE_BUILD_TYPE MATCHES "Release" )
-    add_definitions("-DRELEASE")
-endif()
+SET(CMAKE_CXX_FLAGS_DEBUG "$ENV{CXXFLAGS} -O0 -Wall -g -ggdb -DDEBUG")
+SET(CMAKE_CXX_FLAGS_RELEASE "$ENV{CXXFLAGS} -O3 -Wall -DRELEASE")
 
 include_directories(${HTM07_SOURCE_DIR}/core)
 

@@ -33,20 +33,18 @@ public:
     inline coord_t getLength(size_t dim) const;
     inline size_t getSize() const;
     inline coord_t getCoord(id_t id, size_t dim) const;
-
-    SpaceT *getOriginSpace()             { return isDerived() ? _Origin : this;}
-    const SpaceT *getOriginSpace() const { return isDerived() ? _Origin : this;}
-
-    bool getSubSpace(const VecT* start_pos, const VecT* size, 
-                     SpaceT **subspace);
-
-    bool isDerived() const      {return _Origin;}
     size_t getDimension() const {return _TotalMax.dims;}
-private:
+
     inline coord_t getTotalCoord(id_t id, size_t dim) const;
     inline coord_t getTotalLength(size_t dim) const;
     inline size_t getTotalSize() const;
 
+    bool getSubSpace(const VecT* start_pos, const VecT* size, 
+                     SpaceT **subspace);
+
+    // Returns if this space is a subspace of another one. True for a subspace.
+    bool isDerived() const      {return _Origin;}
+private:
     VecT _TotalMax;
     size_t *_SelfMax;
     size_t *_IdProjector;
