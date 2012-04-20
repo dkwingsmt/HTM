@@ -32,7 +32,7 @@ SpaceT::SpaceT(const VecT *size)
         _TotalMax.max[i] = size->max[i];
         _SelfMax[i] = size->max[i];
     }
-    _Origin=NULL;
+    _IsDerived = false;
     this->_StartPos.dims = size->dims;
     this->_StartPos.max = NULL;
 }
@@ -79,7 +79,7 @@ SpaceT::SpaceT(const VecT* start_pos, const VecT* size,SpaceT * origin)
         this->_StartPos.max[i] = start_pos->max[i];
         _SelfIdProjector[i+1] = _SelfIdProjector[i] * _SelfMax[i];
     }
-    _Origin = origin;//origin here is not totally copied, just a ->
+    _IsDerived = true;
 }
 
 bool copyFromSpaceToSubSpace(const data_t * source, data_t * dest, const SpaceT * originspace)

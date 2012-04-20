@@ -43,13 +43,13 @@ public:
                      SpaceT **subspace);
 
     // Returns if this space is a subspace of another one. True for a subspace.
-    bool isDerived() const      {return _Origin;}
+    bool isDerived() const      {return _IsDerived;}
 private:
     VecT _TotalMax;
     size_t *_SelfMax;
     size_t *_IdProjector;
     VecT _StartPos;
-    SpaceT *_Origin;
+    bool _IsDerived;
     size_t *_SelfIdProjector;
     friend bool copyFromSpaceToSubSpace(const data_t * source, data_t * dest, const SpaceT * originspace);
 };
