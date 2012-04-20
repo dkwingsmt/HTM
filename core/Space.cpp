@@ -91,8 +91,8 @@ bool copyFromSpaceToSubSpace(const data_t * source, data_t * dest, const SpaceT 
     size_t * nowpos = new size_t[dimension];
     for(int i=0;i<dimension;++i)
     {
-        startpos[i]=originspace->_StartPos[i];
-        endpos[i]=startpos[i]+originspace->_SelfMax[i];
+        startpos[i]=originspace->getStartPos(i);
+        endpos[i]=startpos[i]+originspace->getLength(i);
         nowpos[i]=startpos[i];
     }
     int countdes = 0;
@@ -137,7 +137,7 @@ bool copyFromSpaceToSubSpace(const data_t * source, data_t * dest, const SpaceT 
         //TODO(lrc):very very poor algorithm, left to be modified
         for(int i=0;i<dimension;++i)
         {
-            countsource += nowpos[i]*originspace->_IdProjector[i];
+            countsource += nowpos[i]*originspace->getTotalIdProj(i);
         }
         dest[countdes] = source[countsource];
         countdes++;

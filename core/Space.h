@@ -23,7 +23,6 @@ class LayerT;
 class SpaceT
 {
     friend class IntrospectionT;
-    friend bool copyFromSpaceToSubSpace(const data_t * source, data_t * dest, const SpaceT * originspace);
 public:
     // New SpaceT from a given VecT as size of each dimensions
     SpaceT(const VecT *size);
@@ -35,10 +34,13 @@ public:
     inline size_t getSize() const;
     inline coord_t getCoord(id_t id, size_t dim) const;
     inline size_t getDimension() const {return _Dims;}
+    inline size_t getIdProj(size_t dim) const;
+    inline size_t getStartPos(size_t dim) const;
 
     inline coord_t getTotalCoord(id_t id, size_t dim) const;
     inline coord_t getTotalLength(size_t dim) const;
     inline size_t getTotalSize() const;
+    inline size_t getTotalIdProj(size_t dim) const;
 
     bool getSubSpace(const VecT* start_pos, const VecT* size, 
                      SpaceT **subspace);
@@ -54,6 +56,22 @@ private:
     size_t *_SelfIdProjector;
     bool _IsDerived;
 };
+size_t SpaceT::getIdProj(size_t dim) const
+{
+    assert(dim < getDimension() + 1 && "Dimension exceeded limit.");
+    return _SelfIdProjector[dim];
+}
+size_t SpaceT::getTotalIdProj(size_t dim) const
+{
+    assert(dim < getDimension() + 1 && "Dimension exceeded limit.");
+    return _IdProjector[dim];
+}
+
+size_t SpaceT::getStartPos(size_t dim) const
+{
+    assert(dim < getDimension() && "Dimension exceeded limit.");
+    return _StartPos[dim];
+}
 
 coord_t SpaceT::getCoord(id_t id, size_t dim) const
 {
