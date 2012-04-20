@@ -18,7 +18,6 @@ namespace htm07 {
 
 class IntrospectionT;
 
-
 class LayerT;
 
 class SpaceT
@@ -33,9 +32,9 @@ public:
 
     inline coord_t getTotalCoord(id_t id, size_t dim) const;
     inline coord_t getTotalLength(size_t dim) const;
-    inline coord_t getSelfLength(size_t dim) const;
+    inline coord_t getLength(size_t dim) const;
     inline size_t getTotalSize() const;
-    inline size_t getSelfSize() const;
+    inline size_t getSize() const;
 
     bool getSubSpace(const VecT* start_pos, const VecT* size, 
                      SpaceT **subspace);
@@ -65,7 +64,7 @@ coord_t SpaceT::getTotalLength(size_t dim) const
     return -1;//to be modified
 }
 
-coord_t SpaceT::getSelfLength(size_t dim) const
+coord_t SpaceT::getLength(size_t dim) const
 {
     if(dim < _TotalMax.dims)
     {
@@ -82,7 +81,7 @@ size_t SpaceT::getTotalSize() const
     return _IdProjector[_TotalMax.dims];
 }
 
-size_t SpaceT::getSelfSize() const
+size_t SpaceT::getSize() const
 {
     if(!isDerived())
         return _IdProjector[_TotalMax.dims];

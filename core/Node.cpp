@@ -47,7 +47,7 @@ NodeT::NodeT(LayerT *layer, id_t node_id, const VecT *input_std_size) :
                                     * input_std_size->max[i];
         input_node_size.max[i] = __minBinary<size_t>(
                     input_std_size->max[i],
-                    input_space->getSelfLength(i) - input_start_pos.max[i]);
+                    input_space->getLength(i) - input_start_pos.max[i]);
         assert(input_node_size.max[i] > 0);
 
         // TODO(mt): How to determine the output size? (See Layer::Layer())
@@ -59,9 +59,9 @@ NodeT::NodeT(LayerT *layer, id_t node_id, const VecT *input_std_size) :
     _Layer->_InputSpace->getSubSpace(&output_start_pos, &output_node_size, 
                                      &_OutputSpace );
 
-    _Sp = new SpatialPoolerT(_InputSpace->getSelfSize());
+    _Sp = new SpatialPoolerT(_InputSpace->getSize());
     assert(_Sp && "Allocation failed.");
-    _InputData = new data_t[_InputSpace->getSelfSize()];
+    _InputData = new data_t[_InputSpace->getSize()];
     assert(_InputData && "Allocation failed.");
 
     delete[] input_start_pos.max;
@@ -81,7 +81,7 @@ NodeT::~NodeT()
 void NodeT::nodeExpose(const data_t *input)
 {
     copyFromSpaceToSubSpace(input, _InputData, _InputSpace);
-    size_t input_size = _InputSpace->getSelfSize();
+    size_t input_size = _InputSpace->getSize();
     // Transform complete input data to data block
     if(!learned())
     {
