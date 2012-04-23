@@ -85,7 +85,7 @@ void NodeT::nodeExpose(const data_t *input)
     // Transform complete input data to data block
     if(!learned())
     {
-        assert(!_Sp->learned());
+    //    assert(!_Sp->learned());
         _Sp->spLearn(_InputData, input_size);
         if(_Sp->learned())
         {
