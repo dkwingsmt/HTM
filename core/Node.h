@@ -49,7 +49,9 @@ public:
      *      The default size that one node manages, used by this node
      *      unless no enough space remains. 
      */
-    NodeT(LayerT *layer, id_t node_id, const VecT *input_std_size);
+    //NodeT(LayerT *layer, id_t node_id, const VecT *input_std_size);
+    
+    NodeT(LayerT *layer, id_t node_id, const AllocInfoT *alloc_info);
 
     // Regular deletion.
     ~NodeT();
@@ -70,6 +72,10 @@ public:
     //   Whether this node completed learning. Equivalent to the learned state
     // of its sp. Returns true if completed.
     bool learned() const                { return _Learned;  }
+
+    void concludeStepOne();
+    void concludeStepTwo(const AllocInfoT& sp_output_alloc,
+                         const AllocInfoT& tp_output_alloc);
 
 private:
     data_t *_outputData()               { return _Layer->_Output;   }

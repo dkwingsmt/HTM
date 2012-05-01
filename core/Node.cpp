@@ -94,4 +94,21 @@ void NodeT::nodeExpose(const data_t *input)
     }
 }
 
+void NodeT::concludeStepOne()
+{
+    // size_t *divide_result
+    // Sp::divide(&divide_result, &size)
+    // tp = new Tp(d, r)
+
+}
+
+void NodeT::concludeStepTwo(const AllocInfoT& sp_output_alloc,
+                            const AllocInfoT& tp_output_alloc)
+{
+    // store sp_output_alloc
+    // store tp_output_alloc
+    // set sp learned
+    // set learned
+}
+
 }   // namespace htm07

@@ -51,6 +51,12 @@ private:
     bool _learned; 
 public:    
     size_t getQuantsSize() {return _PatternList->size();}; // return how many patterns have been stored
+    size_t getCentersNum() const;
+    // void readyToLearn() const;
+    // void sortGroup(size_t **center_group_info, size_t *group_num) const;
+    // bool setLearned() const;
+    // void setOutputDest(data_t *dst, const AllocInfoT &alloc_info);
+
    // void addTimeLine(int prevID,int currID);
     void spLearn(const data_t *input_data,size_t data_size);//main process of learning
     const data_t * spInference(const data_t *input_data,size_t data_size); 
