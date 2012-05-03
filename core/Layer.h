@@ -24,7 +24,9 @@ class LayerT
     friend class NodeT;
     friend class IntrospectionT;
 public:
-    LayerT(const VecT *input_size, const VecT *node_size); 
+    //LayerT(const VecT *input_size, const VecT *node_size); 
+    LayerT(const data_t *input, const SpaceT &node_space, 
+           const AllocInfoT *input_alloc_info);
     ~LayerT();
 
     // Use input data to get each node in this layer trained or to infer
@@ -33,9 +35,6 @@ public:
     bool fullyLearned() const           { return _NumNodeLearned >= _NumNode;  }
     size_t dims() const                 { return _Dims;     }
     size_t numNode() const              { return _NumNode;  }
-    const data_t *output() const        { return _Output;   }
-    const SpaceT *outputSpace() const   { return _OutputSpace;  }
-    const SpaceT *inputSpace() const    { return _InputSpace;   }
     const SpaceT *nodesSpace() const    { return _NodesSpace;   }
 
     void forceConclude();
@@ -58,20 +57,19 @@ private:
 
     data_t *_NodeTransferArray;
     data_t *_NodeOutputArray;
+    size_t _NextLayerNodeNum;
+    AllocInfoT *_NextLayerAllocTable;
 
-    // Prev members
     size_t _Dims;
     size_t _NumNodeLearned;
     size_t _NumNode; 
-
     NodeT **_Nodes;
-    
     SpaceT *_NodesSpace;    // Space for the amount of nodes
 
-    SpaceT *_InputSpace;    // Space for the size of input
-    data_t *_Output;
-    SpaceT *_OutputSpace;   // Space that indicate the size of output
-
+private:
+    // Forbid
+    LayerT(const LayerT&);
+    const LayerT &operator = (const LayerT&);
 };
 
 }   // namespace htm07

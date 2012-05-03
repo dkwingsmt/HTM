@@ -28,6 +28,8 @@ public:
     SpaceT(const VecT *size);
     // A subspace from an exsisted space within the given region
     SpaceT(const VecT* start_pos, const VecT* size,SpaceT * origin);
+    // Copy
+    SpaceT(const SpaceT& src);
     ~SpaceT();
 
     inline coord_t getLength(size_t dim) const;

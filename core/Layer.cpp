@@ -15,6 +15,28 @@
 
 namespace htm07 {
 
+LayerT::LayerT(const data_t *input, const SpaceT &node_space, 
+               const AllocInfoT *input_alloc_info) :
+    _NumNodeLearned(0), _NodeTransferArray(NULL), _NodeOutputArray(NULL),
+    _NextLayerAllocTable(NULL)
+{
+    // Use input allocation table to initialize NodeTs
+
+    _Dims = node_space.getDimension();
+    _NumNode = node_space.getSize();
+    _NodesSpace = new SpaceT(node_space);
+    assert(_NodesSpace && "Allocation failed.");
+
+    _Nodes = new NodeT *[numNode()];
+    assert(_Nodes && "Allocation failed.");
+    for(size_t i = 0; i < numNode(); ++i)
+    {
+        _Nodes[i] = new NodeT(this, i, input_alloc_info[i]);
+        assert(_Nodes[i] && "Allocation failed.");
+    }
+
+}
+/* 
 LayerT::LayerT(const VecT *input_size, const VecT *node_size) :
     _NumNodeLearned(0)
 {
@@ -37,7 +59,6 @@ LayerT::LayerT(const VecT *input_size, const VecT *node_size) :
     _NodesSpace = new SpaceT(&node_space_max);
     assert(_NodesSpace && "Allocation failed.");
 
-    /*
     // TODO: How to judge the size of output? Now I'm giving a constant size.
     VecT output_space_max;
     initializeVec(&output_space_max, dims());
@@ -58,21 +79,25 @@ LayerT::LayerT(const VecT *input_size, const VecT *node_size) :
         _Nodes[i] = new NodeT(this, i, node_size);
     }
     delete[] output_space_max.max;
-    */
 
     delete[] node_space_max.max;
 }
+*/
 
 LayerT::~LayerT()
 {
-    for(size_t i = 0; i < numNode(); ++i)
+    if(_Nodes)
     {
-        delete _Nodes[i];
+        for(size_t i = 0; i < numNode(); ++i)
+        {
+            SAFE_DELETE(_Nodes[i]);
+        }
+        delete[] _Nodes;
     }
-    delete[] _Nodes;
-    delete _InputSpace;
-    delete _NodesSpace;
-    delete _OutputSpace;
+    SAFE_DELETE(_NodesSpace);
+    SAFE_DELETE(_NodeTransferArray);
+    SAFE_DELETE(_NodeOutputArray);
+    SAFE_DELETE(_NextLayerAllocTable);
 }
 
 void LayerT::expose(const data_t *input_data)
@@ -200,20 +225,20 @@ void LayerT::_conclude()
         delete[] _NodeOutputArray;
     _NodeTransferArray = new data_t[sum_centers_num];
     _NodeOutputArray = new data_t[sum_input_size]; 
-    AllocInfoT *_NextLInputAlloc = new AllocInfoT[nlnode_num];
+    AllocInfoT *nlnode_input_alloc = new AllocInfoT[nlnode_num];
     AllocInfoT transfer_alloc;
     AllocInfoT output_alloc;
     // TODO(mt): to continue here
     assert(_NodeTransferArray && _NodeOutputArray 
-           && _NextLInputAlloc && "Allocation failed.");
+           && nlnode_input_alloc && "Allocation failed.");
 
     data_t *now_data_tail;   // Temp var 
     id_t target_nlnode;      // Temp var, the nlnode that this node belongs
     now_data_tail = _NodeOutputArray;
     for(size_t nlnode_id = 0; nlnode_id < nlnode_num; ++nlnode_id)
     {
-        _NextLInputAlloc[nlnode_id].len = nlnode_input_sizes[nlnode_id];     
-        _NextLInputAlloc[nlnode_id].pos = now_data_tail;
+        nlnode_input_alloc[nlnode_id].len = nlnode_input_sizes[nlnode_id];     
+        nlnode_input_alloc[nlnode_id].pos = now_data_tail;
         now_data_tail += nlnode_input_sizes[nlnode_id];
     }
     now_data_tail = _NodeTransferArray;
@@ -224,7 +249,7 @@ void LayerT::_conclude()
         now_data_tail += node_centers_nums[node_id];
 
         target_nlnode = output_raw_info[node_id].nlnode_id;
-        output_alloc.pos = _NextLInputAlloc[target_nlnode].pos
+        output_alloc.pos = nlnode_input_alloc[target_nlnode].pos
                                     + output_raw_info[node_id].pos;
         output_alloc.len = output_raw_info[node_id].len;
 
@@ -235,6 +260,10 @@ void LayerT::_conclude()
     delete[] nlnode_input_sizes;
     delete[] output_raw_info;
     delete[] node_centers_nums;
+
+    // === Output ===
+    _NextLayerNodeNum = nlnode_num;
+    _NextLayerAllocTable = nlnode_input_alloc;
 }
 
 }   // namespace htm07

@@ -15,6 +15,13 @@
 #include <cstdlib>
 #include <cassert>
 
+#ifndef SAFE_DELETE
+#define SAFE_DELETE(x)  { if(x != NULL) delete x; x = NULL; } 
+#endif
+#ifndef SAFE_DELETE_ARRAY
+#define SAFE_DELETE_ARRAY(x)  { if(x != NULL) delete[] x; x = NULL; } 
+#endif
+
 namespace htm07 {
 
     typedef int         coord_t;

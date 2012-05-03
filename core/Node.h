@@ -51,7 +51,7 @@ public:
      */
     //NodeT(LayerT *layer, id_t node_id, const VecT *input_std_size);
     
-    NodeT(LayerT *layer, id_t node_id, const AllocInfoT *alloc_info);
+    NodeT(LayerT *layer, id_t node_id, const AllocInfoT &alloc_info);
 
     // Regular deletion.
     ~NodeT();
@@ -81,8 +81,8 @@ public:
     size_t groupsNum() const;
 
 private:
-    data_t *_outputData()               { return _Layer->_Output;   }
-    const data_t *_outputData() const   { return _Layer->_Output;   }
+    data_t *_outputData()               { return _Layer->_NodeOutputArray;   }
+    const data_t *_outputData() const   { return _Layer->_NodeOutputArray;   }
 
     LayerT *_Layer;     // The layer it belongs
     id_t _Id;           // The id that it is in its layer
