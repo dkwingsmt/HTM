@@ -50,20 +50,25 @@ private:
     std::vector <OneDint_T> _TemporalTable; // used for tp
     bool _learned; 
 public:    
-    // TODO:Change to "GetCentersNum const"
+    // TODO(mt):Change to "GetCentersNum const"
     size_t getQuantsSize() {return _PatternList->size();}; // return how many patterns have been stored
     void readyToConclude() const;
     void sortGroup(size_t **center_group_info, size_t *group_num) const;
-    bool setConcluded();
+    bool setConcluded();      // Will delete temp members (like the adjacency matrix)
     void setOutputDest(const AllocInfoT &alloc_info);
 
-   // void addTimeLine(int prevID,int currID);
+    // void addTimeLine(int prevID,int currID);
+    // TODO(mt):Complete, and use internal input_data instead of parameters
     void spLearn(const data_t *input_data,size_t data_size);//main process of learning
-    const data_t * spInference(const data_t *input_data,size_t data_size); 
+    // TODO(mt):Output to the output position that is set in setOutputDest
+    //          return void
     // inference process , will new a data_t as output, need to delete it out side
-    // TODO:Change to "concluded const"
+    const data_t * spInference(const data_t *input_data,size_t data_size); 
+    // TODO(mt):Change to "concluded const"
     bool learned() {return _learned;}; // returns if sp has finished learning process.
 
+    // TODO(mt): receive an extra data_t * as input_data instead of parameter
+    // at spLearn and spInference
     SpatialPoolerT(size_t PatternSize){
         _PatternList = new SpPatternListT(PatternSize);
         assert(_PatternList && "Allocation failed.");
