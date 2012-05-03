@@ -50,17 +50,18 @@ private:
     std::vector <OneDint_T> _TemporalTable; // used for tp
     bool _learned; 
 public:    
+    // TODO:Change to "GetCentersNum const"
     size_t getQuantsSize() {return _PatternList->size();}; // return how many patterns have been stored
-    size_t getCentersNum() const;
-    // void readyToLearn() const;
-    // void sortGroup(size_t **center_group_info, size_t *group_num) const;
-    // bool setLearned() const;
-    // void setOutputDest(data_t *dst, const AllocInfoT &alloc_info);
+    void readyToConclude() const;
+    void sortGroup(size_t **center_group_info, size_t *group_num) const;
+    bool setConcluded();
+    void setOutputDest(const AllocInfoT &alloc_info);
 
    // void addTimeLine(int prevID,int currID);
     void spLearn(const data_t *input_data,size_t data_size);//main process of learning
     const data_t * spInference(const data_t *input_data,size_t data_size); 
     // inference process , will new a data_t as output, need to delete it out side
+    // TODO:Change to "concluded const"
     bool learned() {return _learned;}; // returns if sp has finished learning process.
 
     SpatialPoolerT(size_t PatternSize){

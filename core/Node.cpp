@@ -21,94 +21,62 @@ template < typename T >
         return (lhs < rhs) ? lhs : rhs;
     }
 
-NodeT::NodeT(LayerT *layer, id_t node_id, const VecT *input_std_size) :
-    _Learned(false)
+NodeT::NodeT(LayerT *layer, id_t node_id, const AllocInfoT &alloc_info) :
+    _Concluded(false)
 {
     _Layer = layer;
     _Id = node_id;
     size_t dims = _Layer->dims();
-    assert(dims == input_std_size->dims);
+    _InputData = alloc_info.pos;
+    _InputLen = alloc_info.len;
 
-    VecT input_start_pos;
-    initializeVec(&input_start_pos, dims);
-    VecT input_node_size;
-    initializeVec(&input_node_size, dims);
-    VecT output_start_pos;
-    initializeVec(&output_start_pos, dims);
-    VecT output_node_size;
-    initializeVec(&output_node_size, dims);
-
-    SpaceT *nodes_space = _Layer->_NodesSpace;
-    SpaceT *input_space = _Layer->_InputSpace;
-    SpaceT *output_space = _Layer->_OutputSpace;
-    for(size_t i = 0; i < dims; ++i)
-    {
-        input_start_pos.max[i] = nodes_space->getTotalCoord(_Id, i) 
-                                    * input_std_size->max[i];
-        input_node_size.max[i] = __minBinary<size_t>(
-                    input_std_size->max[i],
-                    input_space->getLength(i) - input_start_pos.max[i]);
-        assert(input_node_size.max[i] > 0);
-
-        // TODO(mt): How to determine the output size? (See Layer::Layer())
-        output_start_pos.max[i] = nodes_space->getTotalCoord(_Id, i) * 4;
-        output_node_size.max[i] = 4;
-    }
-    _Layer->_InputSpace->getSubSpace(&input_start_pos, &input_node_size, 
-                                     &_InputSpace);
-    _Layer->_InputSpace->getSubSpace(&output_start_pos, &output_node_size, 
-                                     &_OutputSpace );
-
-    _Sp = new SpatialPoolerT(_InputSpace->getSize());
+    _Sp = new SpatialPoolerT(alloc_info.len);
     assert(_Sp && "Allocation failed.");
-    _InputData = new data_t[_InputSpace->getSize()];
-    assert(_InputData && "Allocation failed.");
-
-    delete[] input_start_pos.max;
-    delete[] input_node_size.max;
-    delete[] output_start_pos.max;
-    delete[] output_node_size.max;
 }
 
 NodeT::~NodeT()
 {
     delete _Sp;
-    delete _InputSpace;
-    delete _OutputSpace;
-    delete[] _InputData;
 }
 
-void NodeT::nodeExpose(const data_t *input)
+void NodeT::nodeExpose()
 {
-    copyFromSpaceToSubSpace(input, _InputData, _InputSpace);
-    size_t input_size = _InputSpace->getSize();
     // Transform complete input data to data block
-    if(!learned())
+    if(!concluded())
+    {
+        bool ready_to_conclude_before = readyToConclude();
+        assert(!_Sp->learned());
+        _Sp->spLearn(_InputData, _InputLen);
+        assert(!(ready_to_conclude_before && !readyToConclude()));
+        if(!ready_to_conclude_before && readyToConclude())
+        {
+            _Layer->nodeReadyToConclude(_Id);
+        }
+    }
+    else
     {
         assert(!_Sp->learned());
-        _Sp->spLearn(_InputData, input_size);
-        if(_Sp->learned())
-        {
-            _Layer->nodeSetLearned(_Id);
-        }
+        //assert(_Tp);
+        _Sp->spInference(_InputData, _InputLen);
+        // tp output
     }
 }
 
 void NodeT::concludeStepOne()
 {
-    // size_t *divide_result
-    // Sp::divide(&divide_result, &size)
+    size_t *sort_result = NULL;
+    size_t groups_num = 0;
+    _Sp->sortGroup(&sort_result, &groups_num);
     // tp = new Tp(d, r)
-
 }
 
 void NodeT::concludeStepTwo(const AllocInfoT& sp_output_alloc,
                             const AllocInfoT& tp_output_alloc)
 {
-    // store sp_output_alloc
+    _Sp->setOutputDest(sp_output_alloc);
     // store tp_output_alloc
-    // set sp learned
-    // set learned
+    _Sp->setConcluded();
+    _Concluded = true;
 }
 
 }   // namespace htm07

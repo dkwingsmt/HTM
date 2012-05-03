@@ -32,7 +32,7 @@ public:
     // Use input data to get each node in this layer trained or to infer
     void expose(const data_t *input_data);
 
-    bool fullyLearned() const           { return _NumNodeLearned >= _NumNode;  }
+    bool fullyReady() const             { return _NumNodeReady >= _NumNode;  }
     size_t dims() const                 { return _Dims;     }
     size_t numNode() const              { return _NumNode;  }
     const SpaceT *nodesSpace() const    { return _NodesSpace;   }
@@ -45,7 +45,7 @@ private:
     //   Called only by NodeT. 
     //   NodeT plz make sure only call it once, for LayerT don't remember
     // which has called it so far, but only the number it is called instead.
-    void nodeSetLearned(id_t target_id)     { ++_NumNodeLearned;    }
+    void nodeReadyToConclude(id_t target_id)     { ++_NumNodeReady;    }
 
     //   This two function used in conclusion process in expose()
     // decided only by this->_NodesSpace
@@ -61,7 +61,7 @@ private:
     AllocInfoT *_NextLayerAllocTable;
 
     size_t _Dims;
-    size_t _NumNodeLearned;
+    size_t _NumNodeReady;
     size_t _NumNode; 
     NodeT **_Nodes;
     SpaceT *_NodesSpace;    // Space for the amount of nodes
