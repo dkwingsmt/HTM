@@ -52,9 +52,12 @@ private:
 public:    
     // TODO(mt):Change to "GetCentersNum const"
     size_t getQuantsSize() {return _PatternList->size();}; // return how many patterns have been stored
-    void readyToConclude() const;
+    bool readyToConclude() const;
+    //   Divide centers into groups, output groups info(size_t[] indicating 
+    // which group each center belongs to, and the total group amount.
+    //   Do not change self or any storage jobs, only compute and output.
     void sortGroup(size_t **center_group_info, size_t *group_num) const;
-    bool setConcluded();      // Will delete temp members (like the adjacency matrix)
+    void setConcluded();      // Will delete temp members (like the adjacency matrix)
     void setOutputDest(const AllocInfoT &alloc_info);
 
     // void addTimeLine(int prevID,int currID);
@@ -63,6 +66,7 @@ public:
     // TODO(mt):Output to the output position that is set in setOutputDest
     //          return void
     // inference process , will new a data_t as output, need to delete it out side
+    // TODO(mt):Change parameter to none and return to void.
     const data_t * spInference(const data_t *input_data,size_t data_size); 
     // TODO(mt):Change to "concluded const"
     bool learned() {return _learned;}; // returns if sp has finished learning process.
