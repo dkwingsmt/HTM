@@ -22,11 +22,11 @@ int main (/* int argc, char *argv[] */)
     adj_mat[1]=4;
     adj_mat[5]=4;
     adj_mat[4]=2;
-    adj-mat[20]=4;
-    size = 5;
-    int * group_info = new int[5];
-    int group_num;
+    adj_mat[20]=4;
+    int size = 5;
+    size_t * group_info = new size_t[5];
+    size_t group_num;
     formTemperalGroup(adj_mat,size,&group_info,&group_num);
-    std::cout<<"!"<<group_num<<endl;
+    std::cout<<"!"<<group_num<<std::endl;
     return 0;
 }		

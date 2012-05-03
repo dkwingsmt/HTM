@@ -12,6 +12,7 @@
 #include <queue>
 #define MAX_GROUP_SIZE 30;
 #define NTOP 2;
+#include <iostream>
 
 namespace htm07 {
 void formTemperalGroup(const float* adj_mat, size_t size, size_t ** group_info,size_t * group_num)
@@ -19,26 +20,25 @@ void formTemperalGroup(const float* adj_mat, size_t size, size_t ** group_info,s
 {
     bool * used = new bool[size];
     size_t * group_info_temp = new size_t[size];
-    for(int i = 0;i<size;++i)
+    for(size_t   i = 0;i<size;++i)
     {
         used[i] = false;
     }
-    int group_counted = 0;
+    size_t group_counted = 0;
     int center_left = size;
     while(center_left>0)
     {
-        int center_to_be_deleted = 0;
         //step 1: find most connected
         int save_number;
         float max = -1;
-        for(int i = 0; i < size; ++i)
+        for(size_t i = 0; i < size; ++i)
         {
 
             float temp_sum = 0;
             if(used[i] == false)
             {
                 //int count_adj;
-                for(int j = 0;j<size; ++j)
+                for(size_t j = 0;j<size; ++j)
                 {
                     if(j != i&& used[j] == false)
                     {
@@ -50,13 +50,14 @@ void formTemperalGroup(const float* adj_mat, size_t size, size_t ** group_info,s
             {
                 save_number = i;
                 max = temp_sum;
+           // std::cout<<"!!!"<<temp_sum<<std::endl;            
             }
         }
         //step 2: add connected nodes
 
-        std::queue<int> centers_find_more;
+        std::queue<size_t> centers_find_more;
         centers_find_more.push(save_number);
-        int count_for_max_size = 0;
+        size_t count_for_max_size = 0;
         while(centers_find_more.size() != 0)
         {
             int temp = centers_find_more.front();
@@ -69,9 +70,9 @@ void formTemperalGroup(const float* adj_mat, size_t size, size_t ** group_info,s
             centers_find_more.pop();
             int max1number,max2number;//TODO:已经整合了两个最大的进去，目前效率较高，以后可能改成一个排序之后可以取前NTOP个
             int to_be_inline = 0;
-            for(int j = 0;j < size; ++j)
+            for(size_t j = 0;j < size; ++j)
             {
-                int i = temp;
+                size_t i = temp;
                 float max1 = -1;//TODO: 不含有负数？
                 float max2 = -2;
                 if(j != i && used[j] == false)
