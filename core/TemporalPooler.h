@@ -15,6 +15,8 @@
 #include "Node.h"
 #include "Common.h"
 
+
 namespace htm07 {
-void formTemperalGroup(const float* adj_mat, size_t size, std::vector<size_t>& group_info);
+void formTemperalGroup(const float* adj_mat, size_t size, size_t ** group_info,size_t * group_num); 
 }
+#endif
