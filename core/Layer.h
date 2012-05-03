@@ -49,12 +49,13 @@ private:
 
     //   This two function used in conclusion process in expose()
     // decided only by this->_NodesSpace
+    // TODO(mt): complete them
     size_t _nextLayerNodeNum() const;
     id_t _mapNodeToNextLayerNode(id_t src) const;
 
-
     void _conclude();
 
+    // TODO(mt): generate nodesspace for the next layer
     data_t *_NodeTransferArray;
     data_t *_NodeOutputArray;
     size_t _NextLayerNodeNum;
