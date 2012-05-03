@@ -38,7 +38,9 @@ public:
     const SpaceT *inputSpace() const    { return _InputSpace;   }
     const SpaceT *nodesSpace() const    { return _NodesSpace;   }
 
-    void setAllLearned();
+    void forceConclude();
+
+    // Prev members
 
 private:
     //   Called only by NodeT. 
@@ -46,6 +48,18 @@ private:
     // which has called it so far, but only the number it is called instead.
     void nodeSetLearned(id_t target_id)     { ++_NumNodeLearned;    }
 
+    //   This two function used in conclusion process in expose()
+    // decided only by this->_NodesSpace
+    size_t _nextLayerNodeNum() const;
+    id_t _mapNodeToNextLayerNode(id_t src) const;
+
+
+    void _conclude();
+
+    data_t *_NodeTransferArray;
+    data_t *_NodeOutputArray;
+
+    // Prev members
     size_t _Dims;
     size_t _NumNodeLearned;
     size_t _NumNode; 

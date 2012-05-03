@@ -71,11 +71,14 @@ public:
     
     //   Whether this node completed learning. Equivalent to the learned state
     // of its sp. Returns true if completed.
+    bool readyToConclude() const;
     bool learned() const                { return _Learned;  }
 
     void concludeStepOne();
     void concludeStepTwo(const AllocInfoT& sp_output_alloc,
                          const AllocInfoT& tp_output_alloc);
+    size_t centersNum() const;
+    size_t groupsNum() const;
 
 private:
     data_t *_outputData()               { return _Layer->_Output;   }

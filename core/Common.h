@@ -33,7 +33,7 @@ namespace htm07 {
 
     struct AllocInfoT
     {
-        size_t pos;
+        data_t *pos;
         size_t len;
     };
 
