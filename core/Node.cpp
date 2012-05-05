@@ -30,7 +30,7 @@ NodeT::NodeT(LayerT *layer, id_t node_id, const AllocInfoT &alloc_info) :
     _InputData = alloc_info.pos;
     _InputLen = alloc_info.len;
 
-    _Sp = new SpatialPoolerT(alloc_info.len);
+    _Sp = new SpatialPoolerT(alloc_info.pos,alloc_info.len);
     assert(_Sp && "Allocation failed.");
 }
 
@@ -45,8 +45,8 @@ void NodeT::nodeExpose()
     if(!concluded())
     {
         bool ready_to_conclude_before = readyToConclude();
-        assert(!_Sp->learned());
-        _Sp->spLearn(_InputData, _InputLen);
+        assert(!_Sp->readyToConclude());
+        _Sp->spLearn();
         assert(!(ready_to_conclude_before && !readyToConclude()));
         if(!ready_to_conclude_before && readyToConclude())
         {
@@ -55,9 +55,9 @@ void NodeT::nodeExpose()
     }
     else
     {
-        assert(!_Sp->learned());
+        assert(!_Sp->readyToConclude());
         //assert(_Tp);
-        _Sp->spInference(_InputData, _InputLen);
+        _Sp->spInference();
         // tp output
     }
 }
@@ -70,8 +70,8 @@ void NodeT::concludeStepOne()
     // tp = new Tp(d, r)
 }
 
-void NodeT::concludeStepTwo(const AllocInfoT& sp_output_alloc,
-                            const AllocInfoT& tp_output_alloc)
+void NodeT::concludeStepTwo(AllocInfoT& sp_output_alloc,
+                            AllocInfoT& tp_output_alloc)
 {
     _Sp->setOutputDest(sp_output_alloc);
     // store tp_output_alloc

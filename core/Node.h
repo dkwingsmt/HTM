@@ -66,9 +66,9 @@ public:
     bool concluded() const                  { return _Concluded;  }
 
     void concludeStepOne();
-    void concludeStepTwo(const AllocInfoT& sp_output_alloc,
-                         const AllocInfoT& tp_output_alloc);
-    size_t centersNum() const           { return _Sp->getQuantsSize();  }
+    void concludeStepTwo(AllocInfoT& sp_output_alloc,
+                         AllocInfoT& tp_output_alloc);
+    size_t centersNum() const           { return _Sp->GetCentersNum();  }
     size_t groupsNum() const;
 
 private:

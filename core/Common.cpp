@@ -12,12 +12,10 @@
 #include "Common.h"
 
 namespace htm07 {
-data_t computeDistance(const data_t* input1, const data_t* input2, size_t size1, size_t size2)
+data_t computeDistance(const data_t* input1, const data_t* input2, size_t size)
 {
-    if (size1!=size2)
-      return INFINITE;
     data_t sum=0;
-    for (int i=0;i<size1;i++)
+    for (int i=0;i<size;i++)
     {
         sum += (input1[i] - input2[i])*(input1[i]-input2[i]);
     }
