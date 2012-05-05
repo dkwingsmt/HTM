@@ -23,7 +23,7 @@ class IntrospectionT
 public:
     int getLayerNodeNum(const LayerT *layer) {  return layer->_NumNode;     }
     int getLayerNodeCenterNum(const LayerT *layer, size_t node_id)
-    {   return layer->_Nodes[node_id]->_Sp->getQuantsSize();    }
+    {   return layer->_Nodes[node_id]->_Sp->GetCentersNum();    }
 
 };
 

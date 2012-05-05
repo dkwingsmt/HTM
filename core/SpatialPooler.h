@@ -11,14 +11,18 @@
 #ifndef  _HTM07_SPATIAL_POOLER_H__INC
 #define  _HTM07_SPATIAL_POOLER_H__INC
 #include <vector>
+#include <queue>
 #include <cassert>
 #include "Common.h"
 
 namespace htm07 {
 
+    
+void formTemperalGroup(const float* adj_mat, size_t size, size_t ** group_info,size_t * group_num); 
+
 class IntrospectionT;
 
-typedef std::vector <int> OneDint_T;
+typedef std::vector <float> OneDfloat_T;
 
 class SpPatternListT // store the patterns, or the so-called "quantization centers"
 {
@@ -48,10 +52,9 @@ private:
     data_t _MaxDist;// the maxdist to distinguish differente patterns.
     SpPatternListT* _PatternList;
     size_t _PatternSize;// the size of a single pattern.
-    std::vector <OneDint_T> _TemporalTable; // used for tp
     bool _Learned; 
     bool _Concluded;
-    
+    std::vector <OneDfloat_T> _AdjMat;
 public:    
     size_t GetCentersNum() const {return _PatternList->size();}; // return how many patterns have been stored
     bool readyToConclude() const {return _Learned;};
@@ -62,7 +65,7 @@ public:
     void setConcluded(){_Concluded = true;};      // Will delete temp members (like the adjacency matrix)
     void setOutputDest(const AllocInfoT &alloc_info);
 
-    // void addTimeLine(int prevID,int currID);
+    void addTimeLine(int prevID,int currID);
     void spLearn();//main process of learning
     void  spInference(); 
     bool concluded ()const {return _Concluded;}; // returns if sp has finished learning process.
@@ -74,6 +77,7 @@ public:
         assert(_PatternList && "Allocation failed.");
         _Learned = false;
         _Concluded = false;
+        _PreInputID = -1;
     }
     ~SpatialPoolerT()   {};
 
