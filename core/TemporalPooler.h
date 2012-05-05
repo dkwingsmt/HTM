@@ -12,8 +12,8 @@
 #define  _HTM07_TEMPORAL_POOLER_H__INC
 #include <vector>
 #include <cassert>
-#include "Node.h"
-#include "Common.h"
+//#include "Node.h"
+//#include "Common.h"
 
 
 namespace htm07 {
