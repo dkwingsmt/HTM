@@ -65,7 +65,7 @@ public:
     void setConcluded(){_Concluded = true;};      // Will delete temp members (like the adjacency matrix)
     void setOutputDest(const AllocInfoT &alloc_info);
 
-    void addTimeLine(int prevID,int currID);
+    void addTimeLine(size_t prevID, size_t currID);
     void spLearn();//main process of learning
     void  spInference(); 
     bool concluded ()const {return _Concluded;}; // returns if sp has finished learning process.

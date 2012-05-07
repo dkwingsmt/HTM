@@ -59,7 +59,7 @@ void formTemperalGroup(const float* adj_mat, size_t size, size_t ** group_info,s
         size_t count_for_max_size = 0;
         while(centers_find_more.size() != 0)
         {
-            int temp = centers_find_more.front();
+            size_t temp = centers_find_more.front();
             count_for_max_size++;
             if(count_for_max_size >= MAX_GROUP_SIZE)//TODO:有错？
               break;
@@ -67,18 +67,18 @@ void formTemperalGroup(const float* adj_mat, size_t size, size_t ** group_info,s
             used[temp] = true;
             group_info_temp[temp] = group_counted;
             centers_find_more.pop();
-            std::vector <int> savecentertemp;
+            std::vector <size_t> savecentertemp;
             for(int fuck=0;fuck<NTOP;++fuck)//TODO:效率太低下！！！！！！！！！！！！！！！！！！
             {
                 float max = 0;//TODO:表示服
                 int mark = -1;              
                 
-                for(int l = fuck;l<size;++l)
+                for(size_t l = fuck;l<size;++l)
                 {
                     if(l != temp && used[l] == false&&adj_mat[temp*size+l] > max)
                     {
                         bool flag = true;
-                        for(int k = 0;k<savecentertemp.size();++k)
+                        for(size_t k = 0;k<savecentertemp.size();++k)
                         {
                             if(l == savecentertemp[k])
                                 flag=false;
@@ -108,7 +108,7 @@ void formTemperalGroup(const float* adj_mat, size_t size, size_t ** group_info,s
 
 SpPatternListT::~SpPatternListT()
 {
-        for (int i=0;i<_Patterns.size();i++)
+        for (size_t i=0;i<_Patterns.size();i++)
         {
             if (_Patterns[i]!=NULL)
               delete _Patterns[i];
@@ -120,7 +120,7 @@ void SpPatternListT::push(const data_t *input,size_t data_size)
 {
     assert(data_size==_PatternSize);
     data_t * temp = new data_t[data_size];
-    for (int i=0;i<data_size;i++)
+    for (size_t i=0;i<data_size;i++)
     {
         temp[i] = input[i];
     }
@@ -132,7 +132,7 @@ void SpPatternListT::push(const data_t *input,size_t data_size)
 void SpatialPoolerT::spLearn()
 {
     bool neverAppeared = true;
-    for (int i=0;i<_PatternList->size();i++)
+    for (size_t i=0;i<_PatternList->size();i++)
     {
         int dis = computeDistance(_InputData,_PatternList->getPattern(i),_PatternSize);
        if (dis<=_MaxDist)
@@ -155,7 +155,7 @@ void SpatialPoolerT::spInference()
 { 
     int minID = 0; 
     int minDist = INFINITE; 
-    for (int i=0;i<_PatternList->size();i++)
+    for (size_t i=0;i<_PatternList->size();i++)
     { 
         int dist = computeDistance(_InputData,_PatternList->getPattern(i),_PatternSize); 
         if (dist<minDist) 
@@ -164,7 +164,7 @@ void SpatialPoolerT::spInference()
             minDist = dist;
         }
     }
-    for (int i=0;i<_PatternList->size();i++)
+    for (size_t i=0;i<_PatternList->size();i++)
     {
         _OutputData[i] = 0;
     }
@@ -176,14 +176,14 @@ void SpatialPoolerT::setOutputDest(const AllocInfoT &alloc_info)
    _OutputData = alloc_info.pos;
 }
 
-void SpatialPoolerT::addTimeLine(int prevID,int currID)
+void SpatialPoolerT::addTimeLine(size_t prevID, size_t currID)
 {
     if (currID+1>_AdjMat.size())
     {
-       for (int i=0;i<_AdjMat.size();i++)
+       for (size_t i=0;i<_AdjMat.size();i++)
          _AdjMat[i].push_back(0);
        OneDfloat_T temp;
-       for (int i=0;i<_AdjMat[0].size();i++)
+       for (size_t i=0;i<_AdjMat[0].size();i++)
          temp.push_back(0);
        _AdjMat.push_back(temp);
     }
@@ -197,8 +197,8 @@ void SpatialPoolerT::addTimeLine(int prevID,int currID)
 void SpatialPoolerT::sortGroup(size_t **center_group_info,size_t *group_num) const
 {
     float *myadj = new float[_AdjMat.size()*_AdjMat.size()];
-    for (int i=0;i<_AdjMat.size();i++ )
-      for (int j=0;j<_AdjMat.size();j++)
+    for (size_t i=0;i<_AdjMat.size();i++ )
+      for (size_t j=0;j<_AdjMat.size();j++)
       {
           myadj[i*_AdjMat.size()+j] = _AdjMat[i][j];        
       }
