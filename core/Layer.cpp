@@ -17,8 +17,8 @@ namespace htm07 {
 
 LayerT::LayerT(const data_t *input, const SpaceT &node_space, 
                const AllocInfoT *input_alloc_info) :
-    _NumNodeLearned(0), _NodeTransferArray(NULL), _NodeOutputArray(NULL),
-    _NextLayerAllocTable(NULL)
+    _NodeTransferArray(NULL), _NodeOutputArray(NULL),
+    _NextLayerAllocTable(NULL), _NumNodeReady(0)
 {
     // Use input allocation table to initialize NodeTs
 
@@ -55,19 +55,19 @@ LayerT::~LayerT()
 
 void LayerT::expose(const data_t *input_data)
 {
-    bool before_learned = fullyLearned();
+    bool before_learned = fullyReady();
     const size_t node_num = numNode();
     for(size_t i = 0; i < node_num; ++i)
     {
-        _Nodes[i]->nodeExpose(input_data);
+        _Nodes[i]->nodeExpose();
     }
 
     //   Such condition never happens that 
     //   this layer is learned before but turned unlearned after.
-    assert(!(before_learned && !fullyLearned()));
+    assert(!(before_learned && !fullyReady()));
 
     // if turned learned right at this round
-    if(!before_learned && fullyLearned())
+    if(!before_learned && fullyReady())
     {
         _conclude();
     }

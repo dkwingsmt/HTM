@@ -62,7 +62,7 @@ public:
      */
     void nodeExpose();
     
-    bool readyToConclude() const            { _Sp->readyToConclude();  }
+    bool readyToConclude() const            { return _Sp->readyToConclude();  }
     bool concluded() const                  { return _Concluded;  }
 
     void concludeStepOne();
