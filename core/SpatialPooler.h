@@ -44,7 +44,26 @@ private:
 class SpatialPoolerT
 {
     friend class IntrospectionT;
+public:    
+    // at spLearn and spInference
+    SpatialPoolerT(data_t* input_data,size_t PatternSize);
+    ~SpatialPoolerT()   {}
+
+    size_t getCentersNum() const {return _PatternList->size();}; // return how many patterns have been stored
+    bool readyToConclude() const {return _Learned;};
+    //   Divide centers into groups, output groups info(size_t[] indicating 
+    // which group each center belongs to, and the total group amount.
+    //   Do not change self or any storage jobs, only compute and output.
+    void sortGroup(size_t **center_group_info, size_t *group_num) const;
+    void setConcluded(){_Concluded = true;};      // Will delete temp members (like the adjacency matrix)
+    void setOutputDest(data_t *pos);
+
+    void spLearn();//main process of learning
+    void spInference(); 
+    bool concluded() const {return _Concluded;}; // returns if sp has finished learning process.
+
 private:
+    void _addTimeLine(size_t prevID, size_t currID);
     
     data_t* _InputData;
     data_t* _OutputData;
@@ -55,32 +74,6 @@ private:
     bool _Learned; 
     bool _Concluded;
     std::vector <OneDfloat_T> _AdjMat;
-public:    
-    size_t GetCentersNum() const {return _PatternList->size();}; // return how many patterns have been stored
-    bool readyToConclude() const {return _Learned;};
-    //   Divide centers into groups, output groups info(size_t[] indicating 
-    // which group each center belongs to, and the total group amount.
-    //   Do not change self or any storage jobs, only compute and output.
-    void sortGroup(size_t **center_group_info, size_t *group_num) const;
-    void setConcluded(){_Concluded = true;};      // Will delete temp members (like the adjacency matrix)
-    void setOutputDest(const AllocInfoT &alloc_info);
-
-    void addTimeLine(size_t prevID, size_t currID);
-    void spLearn();//main process of learning
-    void  spInference(); 
-    bool concluded ()const {return _Concluded;}; // returns if sp has finished learning process.
-
-    // at spLearn and spInference
-    SpatialPoolerT(data_t* input_data,size_t PatternSize){
-        _InputData = input_data;
-        _PatternList = new SpPatternListT(PatternSize);
-        assert(_PatternList && "Allocation failed.");
-        _Learned = false;
-        _Concluded = false;
-        _PreInputID = -1;
-    }
-    ~SpatialPoolerT()   {};
-
 };
 
 }   // namespace htm07

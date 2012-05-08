@@ -47,6 +47,32 @@ bool SpaceT::getSubSpace(const VecT* start_pos, const VecT* size,
     *subspace = tempspace;
     return true;
 }
+
+SpaceT::SpaceT(const SpaceT& src) :
+    _Dims(src._Dims), _IsDerived(src._IsDerived)
+{
+    _TotalMax = new size_t[getDimension()];
+    assert(_TotalMax);
+    _TotalIdProjector= new size_t[getDimension()+1];
+    assert(_TotalIdProjector);
+    _TotalIdProjector[0]=1;
+    _SelfIdProjector= new size_t[getDimension()+1];
+    assert(_SelfIdProjector);
+    _SelfIdProjector[0]=1;
+    _SelfMax = new size_t[getDimension()];
+    assert(_SelfMax);
+    _StartPos = new size_t[getDimension()];
+    assert(_StartPos);
+    for(size_t i = 0;i < getDimension(); ++i)
+    {
+        _TotalIdProjector[i+1] = src._TotalIdProjector[i+1];
+        _SelfIdProjector[i+1] = src._SelfIdProjector[i+1];
+        _TotalMax[i] = src._TotalMax[i];
+        _SelfMax[i] = src._SelfMax[i];
+        _StartPos[i] = src._StartPos[i];
+    }
+}
+
 SpaceT::~SpaceT()
 {
     delete []_TotalMax;

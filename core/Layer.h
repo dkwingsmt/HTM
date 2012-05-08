@@ -24,13 +24,11 @@ class LayerT
     friend class NodeT;
     friend class IntrospectionT;
 public:
-    //LayerT(const VecT *input_size, const VecT *node_size); 
-    LayerT(const data_t *input, const SpaceT &node_space, 
-           const AllocInfoT *input_alloc_info);
+    LayerT(const SpaceT &node_space, const AllocInfoT *input_alloc_info);
     ~LayerT();
 
     // Use input data to get each node in this layer trained or to infer
-    void expose(const data_t *input_data);
+    void expose();
 
     bool fullyReady() const             { return _NumNodeReady >= _NumNode;  }
     size_t dims() const                 { return _Dims;     }
@@ -48,24 +46,23 @@ private:
     void nodeReadyToConclude(id_t target_id)     { ++_NumNodeReady;    }
 
     //   This two function used in conclusion process in expose()
-    // decided only by this->_NodesSpace
+    // determined only by this->_NodesSpace
     // TODO(mt): complete them
-    size_t _nextLayerNodeNum() const;
+    void _nextLayerNodesSpace(SpaceT **out) const;
     id_t _mapNodeToNextLayerNode(id_t src) const;
 
     void _conclude();
-
-    // TODO(mt): generate nodesspace for the next layer
-    data_t *_NodeTransferArray;
-    data_t *_NodeOutputArray;
-    size_t _NextLayerNodeNum;
-    AllocInfoT *_NextLayerAllocTable;
 
     size_t _Dims;
     size_t _NumNodeReady;
     size_t _NumNode; 
     NodeT **_Nodes;
     SpaceT *_NodesSpace;    // Space for the amount of nodes
+
+    data_t *_NodeOutputArray;
+    data_t *_NodeTransferArray;
+    SpaceT *_NextLayerNodesSpace;
+    AllocInfoT *_NextLayerAllocTable;
 
 private:
     // Forbid

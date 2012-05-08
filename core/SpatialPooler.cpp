@@ -105,15 +105,24 @@ void formTemperalGroup(const float* adj_mat, size_t size, size_t ** group_info,s
     delete []used;
 }
 
+SpatialPoolerT::SpatialPoolerT(data_t* input_data,size_t PatternSize)
+{
+    _InputData = input_data;
+    _PatternList = new SpPatternListT(PatternSize);
+    assert(_PatternList && "Allocation failed.");
+    _Learned = false;
+    _Concluded = false;
+    _PreInputID = -1;
+}
 
 SpPatternListT::~SpPatternListT()
 {
-        for (size_t i=0;i<_Patterns.size();i++)
-        {
-            if (_Patterns[i]!=NULL)
-              delete _Patterns[i];
-        }
-        _Patterns.clear();
+    for (size_t i=0;i<_Patterns.size();i++)
+    {
+        if (_Patterns[i]!=NULL)
+          delete _Patterns[i];
+    }
+    _Patterns.clear();
 }
 
 void SpPatternListT::push(const data_t *input,size_t data_size)
@@ -138,7 +147,7 @@ void SpatialPoolerT::spLearn()
        if (dis<=_MaxDist)
        {
            neverAppeared = false;
-           addTimeLine(_PreInputID,i);
+           _addTimeLine(_PreInputID,i);
            break;
        }
     }
@@ -148,7 +157,7 @@ void SpatialPoolerT::spLearn()
         if (neverAppeared)
         {
             _PatternList->push(_InputData,_PatternSize);
-            addTimeLine(_PreInputID,_PatternList->size()-1);  
+            _addTimeLine(_PreInputID,_PatternList->size()-1);  
         } 
 }
 void SpatialPoolerT::spInference()
@@ -171,12 +180,12 @@ void SpatialPoolerT::spInference()
     _OutputData[minID] = 1;
 }
 
-void SpatialPoolerT::setOutputDest(const AllocInfoT &alloc_info)
+void SpatialPoolerT::setOutputDest(data_t *pos)
 {
-   _OutputData = alloc_info.pos;
+   _OutputData = pos;
 }
 
-void SpatialPoolerT::addTimeLine(size_t prevID, size_t currID)
+void SpatialPoolerT::_addTimeLine(size_t prevID, size_t currID)
 {
     if (currID+1>_AdjMat.size())
     {

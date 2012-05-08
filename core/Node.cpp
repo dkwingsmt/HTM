@@ -26,7 +26,7 @@ NodeT::NodeT(LayerT *layer, id_t node_id, const AllocInfoT &alloc_info) :
 {
     _Layer = layer;
     _Id = node_id;
-    size_t dims = _Layer->dims();
+    //size_t dims = _Layer->dims();
     _InputData = alloc_info.pos;
     _InputLen = alloc_info.len;
 
@@ -70,10 +70,10 @@ void NodeT::concludeStepOne()
     // tp = new Tp(d, r)
 }
 
-void NodeT::concludeStepTwo(AllocInfoT& sp_output_alloc,
-                            AllocInfoT& tp_output_alloc)
+void NodeT::concludeStepTwo(data_t *sp_output_dest,
+                            data_t *tp_output_dest)
 {
-    _Sp->setOutputDest(sp_output_alloc);
+    _Sp->setOutputDest(sp_output_dest);
     // store tp_output_alloc
     _Sp->setConcluded();
     _Concluded = true;

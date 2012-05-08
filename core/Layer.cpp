@@ -15,10 +15,9 @@
 
 namespace htm07 {
 
-LayerT::LayerT(const data_t *input, const SpaceT &node_space, 
-               const AllocInfoT *input_alloc_info) :
-    _NodeTransferArray(NULL), _NodeOutputArray(NULL),
-    _NextLayerAllocTable(NULL), _NumNodeReady(0)
+LayerT::LayerT(const SpaceT &node_space, const AllocInfoT *input_alloc_info) :
+    _NumNodeReady(0), _NodeOutputArray(NULL), _NodeTransferArray(NULL),
+    _NextLayerNodesSpace(NULL), _NextLayerAllocTable(NULL)
 {
     // Use input allocation table to initialize NodeTs
 
@@ -51,11 +50,12 @@ LayerT::~LayerT()
     SAFE_DELETE(_NodeTransferArray);
     SAFE_DELETE(_NodeOutputArray);
     SAFE_DELETE(_NextLayerAllocTable);
+    SAFE_DELETE(_NextLayerNodesSpace);
 }
 
-void LayerT::expose(const data_t *input_data)
+void LayerT::expose()
 {
-    bool before_learned = fullyReady();
+    bool before_ready = fullyReady();
     const size_t node_num = numNode();
     for(size_t i = 0; i < node_num; ++i)
     {
@@ -63,15 +63,19 @@ void LayerT::expose(const data_t *input_data)
     }
 
     //   Such condition never happens that 
-    //   this layer is learned before but turned unlearned after.
-    assert(!(before_learned && !fullyReady()));
+    // this layer is ready before this exposure but turned not ready after.
+    assert(!(before_ready && !fullyReady()));
 
-    // if turned learned right at this round
-    if(!before_learned && fullyReady())
+    // if turned fully ready right at this exposure
+    if(!before_ready && fullyReady())
     {
         _conclude();
     }
 }
+
+struct _AllocRawInfoT {
+    id_t nlnode_id; size_t pos; size_t len;
+};
 
 void LayerT::_conclude()
 {
@@ -129,27 +133,32 @@ void LayerT::_conclude()
     //  |_________| <- node[0].centers_num
     
     const size_t node_num = numNode();
+    //   The distribution of node in the next layer is determined by this layer
+    // via _nextLayerNodeNum() and _mapNodeToNextLayerNode()
+    if(_NextLayerNodesSpace)
+        delete _NextLayerNodesSpace;
+    _nextLayerNodesSpace(&_NextLayerNodesSpace);
+    const size_t nlnode_num = _NextLayerNodesSpace->getSize();
 
     // === Generate raw allocation table ===
-    
-    struct _AllocRawInfoT {
-        id_t nlnode_id; size_t pos; size_t len;
-    };
-    const size_t nlnode_num = _nextLayerNodeNum();
-    size_t sum_input_size = 0;      // also is sum_groups_num
-    // sum of sizes of the nodes that belongs to each nlnode
+
+    // === Variables below are used to generate AllocInfoT for nlnode ===
+    // The size of input of nlnodes; also is sum_groups_num
+    size_t sum_input_size = 0;  
+    // Sum of sizes of the output of nodes that belongs to each nlnode
     size_t *nlnode_input_sizes = new size_t[nlnode_num];
     assert(nlnode_input_sizes && "Allocation failed.");
     for(size_t i = 0; i < nlnode_num; ++i)
         nlnode_input_sizes[i] = 0;
 
-    size_t sum_centers_num = 0;
+    // === Variables below are used to generate AllocInfoT for i/o of nodes ===
     _AllocRawInfoT *output_raw_info = new _AllocRawInfoT[node_num];
+    size_t sum_centers_num = 0;
     size_t *node_centers_nums = new size_t[node_num];
     assert(output_raw_info && "Allocation failed.");
     assert(node_centers_nums && "Allocation failed.");
 
-    // Below used as temp vars
+    // Variables below are used as temp vars
     _AllocRawInfoT *this_raw_info;   
     NodeT *this_node;
 
@@ -178,33 +187,30 @@ void LayerT::_conclude()
         delete[] _NodeOutputArray;
     _NodeTransferArray = new data_t[sum_centers_num];
     _NodeOutputArray = new data_t[sum_input_size]; 
-    AllocInfoT *nlnode_input_alloc = new AllocInfoT[nlnode_num];
-    AllocInfoT transfer_alloc;
-    AllocInfoT output_alloc;
-    // TODO(mt): to continue here
+    _NextLayerAllocTable = new AllocInfoT[nlnode_num];
+    data_t *transfer_alloc;
+    data_t *output_alloc;
     assert(_NodeTransferArray && _NodeOutputArray 
-           && nlnode_input_alloc && "Allocation failed.");
+           && _NextLayerAllocTable && "Allocation failed.");
 
     data_t *now_data_tail;   // Temp var 
     id_t target_nlnode;      // Temp var, the nlnode that this node belongs
     now_data_tail = _NodeOutputArray;
     for(size_t nlnode_id = 0; nlnode_id < nlnode_num; ++nlnode_id)
     {
-        nlnode_input_alloc[nlnode_id].len = nlnode_input_sizes[nlnode_id];     
-        nlnode_input_alloc[nlnode_id].pos = now_data_tail;
+        _NextLayerAllocTable[nlnode_id].len = nlnode_input_sizes[nlnode_id];     
+        _NextLayerAllocTable[nlnode_id].pos = now_data_tail;
         now_data_tail += nlnode_input_sizes[nlnode_id];
     }
     now_data_tail = _NodeTransferArray;
     for(size_t node_id = 0; node_id < node_num; ++node_id)
     {
-        transfer_alloc.pos = now_data_tail;
-        transfer_alloc.len = node_centers_nums[node_id];
+        transfer_alloc= now_data_tail;
         now_data_tail += node_centers_nums[node_id];
 
         target_nlnode = output_raw_info[node_id].nlnode_id;
-        output_alloc.pos = nlnode_input_alloc[target_nlnode].pos
-                                    + output_raw_info[node_id].pos;
-        output_alloc.len = output_raw_info[node_id].len;
+        output_alloc= _NextLayerAllocTable[target_nlnode].pos
+                         + output_raw_info[node_id].pos;
 
         _Nodes[node_id]->concludeStepTwo(transfer_alloc, output_alloc);
     }
@@ -214,9 +220,6 @@ void LayerT::_conclude()
     delete[] output_raw_info;
     delete[] node_centers_nums;
 
-    // === Output ===
-    _NextLayerNodeNum = nlnode_num;
-    _NextLayerAllocTable = nlnode_input_alloc;
 }
 
 }   // namespace htm07
