@@ -30,6 +30,7 @@ NodeT::NodeT(LayerT *layer, id_t node_id, const AllocInfoT &alloc_info) :
     _InputData = alloc_info.pos;
     _InputLen = alloc_info.len;
 
+    _Tp = NULL;
     _Sp = new SpatialPoolerT(alloc_info.pos,alloc_info.len);
     assert(_Sp && "Allocation failed.");
 }
@@ -37,6 +38,8 @@ NodeT::NodeT(LayerT *layer, id_t node_id, const AllocInfoT &alloc_info) :
 NodeT::~NodeT()
 {
     delete _Sp;
+    if (_Tp!=NULL)
+      delete _Tp;
 }
 
 void NodeT::nodeExpose()
@@ -67,14 +70,16 @@ void NodeT::concludeStepOne()
     size_t *sort_result = NULL;
     size_t groups_num = 0;
     _Sp->sortGroup(&sort_result, &groups_num);
-    // tp = new Tp(d, r)
+    assert(sort_result!=NULL);
+    _Tp = new TemporalPoolerT(sort_result, groups_num,_Sp->getCentersNum());
+    //  sort_result stored in tp, need to be deleted at last;
 }
 
 void NodeT::concludeStepTwo(data_t *sp_output_dest,
                             data_t *tp_output_dest)
 {
     _Sp->setOutputDest(sp_output_dest);
-    // store tp_output_alloc
+    _Tp->setIODest(sp_output_dest,tp_output_dest);
     _Sp->setConcluded();
     _Concluded = true;
 }

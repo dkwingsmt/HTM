@@ -16,6 +16,7 @@
 #include "Common.h"
 #include "Layer.h"
 #include "SpatialPooler.h"
+#include "TemporalPooler.h"
 
 #include <iostream>
 
@@ -80,7 +81,7 @@ private:
     bool _Concluded;    // State flag whether node completed learning
 
     SpatialPoolerT *_Sp;
-
+    TemporalPoolerT *_Tp;
     const data_t *_InputData;
     size_t _InputLen;
 };
