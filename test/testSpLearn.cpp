@@ -42,39 +42,29 @@ void displayGnuplot();
 //   Load picture sequence by reading continuous file name of pictures
 // ended by '\n'. 
 //   Input a single "q\n" to stop.
-//   Meet any error (e.g. file not found) and it's stop.
+//   Meet any error (e.g. file not found) and it stops.
 int main ( int argc, char *argv[] )
 {
     data_t *input_data = new data_t[INPUT_HEIGHT * INPUT_WIDTH];
     assert(input_data && "Allocation failed.");
 
-    VecT layer1nodes;
-    initializeVec(&layer1nodes, DIMS);
-    layer1nodes.max[0] = NODES_HEIGHT;
-    layer1nodes.max[1] = NODES_WIDTH;
-    SpaceT l1nodesspace(&layer1nodes);
+    data_t l1inputspacemax[DIM];
+    VecT l1inputspacevec;
+    l1inputspace.max = l1inputspacemax;
+    l1inputspace.max[0] = NODES_HEIGHT;
+    l1inputspace.max[1] = NODES_WIDTH;
+    SpaceT l1inputspace(&l1inputspacevec);
 
-    AllocInfoT l1alinfo[NODES_HEIGHT * NODES_WIDTH];
-    l1alinfo[0].pos = input_data + 0;
-    l1alinfo[0].len = 16;
-    l1alinfo[1].pos = input_data + 4;
-    l1alinfo[1].len = 16;
-    l1alinfo[2].pos = input_data + 8;
-    l1alinfo[2].len = 16;
-    l1alinfo[3].pos = input_data + 0 + 48;
-    l1alinfo[3].len = 16;
-    l1alinfo[4].pos = input_data + 4 + 48;
-    l1alinfo[4].len = 16;
-    l1alinfo[5].pos = input_data + 8 + 48;
-    l1alinfo[5].len = 16;
-    l1alinfo[6].pos = input_data + 0 + 96;
-    l1alinfo[6].len = 16;
-    l1alinfo[7].pos = input_data + 4 + 96;
-    l1alinfo[7].len = 16;
-    l1alinfo[8].pos = input_data + 8 + 96;
-    l1alinfo[8].len = 16;
+    SpaceT *l1nodesspace;
+    SpaceT *l1inputsubspaces;
+    AllocInfoT *l1alinfo;
 
-    LayerT *layer1 = new LayerT(&layer1nodes, l1alinfo);
+    data_t *l1input:
+    prepareSpaces(l1inputspace, &l1nodesspace, &l1inputsubspaces);
+    prepareAllocInfo(l1inputsubspaces, l1input, l1nodesspace->getSize(),
+                &l1alinfo);
+
+    LayerT *layer1 = new LayerT(l1nodesspace, l1alinfo);
 
     initializeGnuplot(layer1);
     std::string infilename;
@@ -97,6 +87,7 @@ int main ( int argc, char *argv[] )
             std::cerr << "Error: File \"" << infilename << "\" not found.\n";
             break;
         }
+        splitImage(input_data, l1inputsubspaces, l1alinfo);
         layer1->expose();
         outputGnuplot(layer1);
     }
@@ -142,6 +133,82 @@ void loadImage(const std::string& filename, data_t *out)
     }
 
     cvReleaseImage(&img);
+}
+
+void prepareSpaces(const SpaceT *fulldataspace, 
+            SpaceT **o_nodesspace, SpaceT **o_subdataspaces)
+{
+    size_t nodessmax[2];
+    VecT nodess;
+    nodess.dims = 2;
+    nodess.max = startmax;
+    nodessmax[0] = 3;
+    nodessmax[1] = 3;
+    *o_nodesspace = new SpaceT(nodess);
+
+    SpaceT *spaces = (SpaceT *)new (void*)[9];
+    *o_subdataspaces = o_subdataspaces;
+
+    size_t startmax[2];
+    VecT start;
+    start.dims = 2;
+    start.max = startmax;
+    startmax[0] = 0;
+    startmax[1] = 0;
+
+    size_t sizemax[2];
+    VecT size;
+    size.dims = 2;
+    size.max = sizemax;
+    sizemax[0] = 4;
+    sizemax[1] = 4;
+
+    startmax[0] = 0;
+    startmax[1] = 0;
+    new (spaces + 0) SpaceT(start, size, fulldataspace);
+    startmax[1] = 4;
+    new (spaces + 1) SpaceT(start, size, fulldataspace);
+    startmax[1] = 8;
+    new (spaces + 2) SpaceT(start, size, fulldataspace);
+    startmax[0] = 1;
+    startmax[1] = 0;
+    new (spaces + 3) SpaceT(start, size, fulldataspace);
+    startmax[1] = 4;
+    new (spaces + 4) SpaceT(start, size, fulldataspace);
+    startmax[1] = 8;
+    new (spaces + 5) SpaceT(start, size, fulldataspace);
+    startmax[0] = 2;
+    startmax[1] = 0;
+    new (spaces + 6) SpaceT(start, size, fulldataspace);
+    startmax[1] = 4;
+    new (spaces + 7) SpaceT(start, size, fulldataspace);
+    startmax[1] = 8;
+    new (spaces + 8) SpaceT(start, size, fulldataspace);
+
+}
+
+void prepareAllocInfo(const SpaceT *nodesspaces, data_t *inputdata, 
+            size_t nodesnum, AllocInfoT **o_alinfo)
+{
+    data_t *nowtail = inputdata;
+    AllocInfoT *alinfo = new AllocInfoT[nodesnum];
+    assert(alinfo && "Allocation failed.");
+    *o_alinfo = alinfo;
+    for(size_t i = 0; i < nodesnum; ++i)
+    {
+        alinfo[i].pos = nowtail;
+        alinfo[i].len = nodesspaces.getSize();
+        nowtail += alinfo[i].len;
+    }
+}
+
+void splitImage(const data_t *indata, const SpaceT *nodesspaces, 
+            AllocInfoT *allocinfo)
+{
+    for(size_t i = 0; i < nodesnum; ++i)
+    {
+        copyFromSpaceToSubSpace(indata, allocinfo->pos, nodesspaces);
+    }
 }
 
 // Use the layer to output debug info.
