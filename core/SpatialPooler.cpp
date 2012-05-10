@@ -114,6 +114,9 @@ SpatialPoolerT::SpatialPoolerT(data_t* input_data,size_t PatternSize)
     _Concluded = false;
     _PreInputID = -1;
     _PatternSize = PatternSize;
+    OneDfloat_T temp;
+    temp.push_back(0);
+    _AdjMat.push_back(temp);
 }
 
 SpPatternListT::~SpPatternListT()
@@ -212,9 +215,9 @@ void SpatialPoolerT::sortGroup(size_t **center_group_info,size_t *group_num) con
       {
           myadj[i*_AdjMat.size()+j] = _AdjMat[i][j];        
       }
-        
+    
     formTemperalGroup(myadj,_AdjMat.size()*_AdjMat.size(), center_group_info,group_num);
-
+    delete []myadj;
 }
 
 }   // namespace htm07
