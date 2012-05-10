@@ -23,8 +23,8 @@ using namespace htm07;
 #define DIMS            2
 #define INPUT_HEIGHT    12
 #define INPUT_WIDTH     12
-#define NODE_HEIGHT     4
-#define NODE_WIDTH      4
+#define NODES_HEIGHT    3
+#define NODES_WIDTH     3
 
 std::string strip(const std::string& instr, const char* charset)
 {
@@ -34,7 +34,7 @@ std::string strip(const std::string& instr, const char* charset)
         : instr.substr(first, instr.find_last_not_of(charset) - first + 1);
 }
 
-void loadImage(const std::string& filename, data_t **p_out);
+void loadImage(const std::string& filename, data_t *out);
 void initializeGnuplot(const LayerT *layer);
 void outputGnuplot(const LayerT *layer);
 void displayGnuplot();
@@ -45,25 +45,44 @@ void displayGnuplot();
 //   Meet any error (e.g. file not found) and it's stop.
 int main ( int argc, char *argv[] )
 {
-    VecT layer1size;
-    initializeVec(&layer1size, DIMS);
-    layer1size.max[0] = INPUT_HEIGHT;
-    layer1size.max[1] = INPUT_WIDTH;
-    VecT layer1nodesize;
-    initializeVec(&layer1nodesize, DIMS);
-    layer1nodesize.max[0] = NODE_HEIGHT;
-    layer1nodesize.max[1] = NODE_WIDTH;
-    LayerT *layer1 = new LayerT(&layer1size, &layer1nodesize);
+    data_t *input_data = new data_t[INPUT_HEIGHT * INPUT_WIDTH];
+    assert(input_data && "Allocation failed.");
+
+    VecT layer1nodes;
+    initializeVec(&layer1nodes, DIMS);
+    layer1nodes.max[0] = NODES_HEIGHT;
+    layer1nodes.max[1] = NODES_WIDTH;
+    SpaceT l1nodesspace(&layer1nodes);
+
+    AllocInfoT l1alinfo[NODES_HEIGHT * NODES_WIDTH];
+    l1alinfo[0].pos = input_data + 0;
+    l1alinfo[0].len = 16;
+    l1alinfo[1].pos = input_data + 4;
+    l1alinfo[1].len = 16;
+    l1alinfo[2].pos = input_data + 8;
+    l1alinfo[2].len = 16;
+    l1alinfo[3].pos = input_data + 0 + 48;
+    l1alinfo[3].len = 16;
+    l1alinfo[4].pos = input_data + 4 + 48;
+    l1alinfo[4].len = 16;
+    l1alinfo[5].pos = input_data + 8 + 48;
+    l1alinfo[5].len = 16;
+    l1alinfo[6].pos = input_data + 0 + 96;
+    l1alinfo[6].len = 16;
+    l1alinfo[7].pos = input_data + 4 + 96;
+    l1alinfo[7].len = 16;
+    l1alinfo[8].pos = input_data + 8 + 96;
+    l1alinfo[8].len = 16;
+
+    LayerT *layer1 = new LayerT(&layer1nodes, l1alinfo);
 
     initializeGnuplot(layer1);
-
-    data_t *input_data = NULL;
-
     std::string infilename;
     while(1)
     {
         system("read n1");
         std::getline(std::cin, infilename);
+        std::cerr << infilename << "\n"; // TODO:Debug
         if(!std::cin)
             break;
         infilename = strip(infilename, " \t\n\r");
@@ -72,13 +91,13 @@ int main ( int argc, char *argv[] )
         else if(infilename == "q")
             break;
 
-        loadImage(infilename, &input_data);
+        loadImage(infilename, input_data);
         if(input_data == NULL)
         {
             std::cerr << "Error: File \"" << infilename << "\" not found.\n";
             break;
         }
-        layer1->expose(input_data);
+        layer1->expose();
         outputGnuplot(layer1);
     }
     displayGnuplot();
@@ -89,21 +108,17 @@ int main ( int argc, char *argv[] )
 
 //   Load a image with given name, allocate a new data_t array,
 // and store the image to the array in the standard format.
-void loadImage(const std::string& filename, data_t **p_out)
+void loadImage(const std::string& filename, data_t *out)
 {
     IplImage *img = cvLoadImage(filename.c_str(), true);
     if(!img)
     {
-        *p_out = NULL;
         return;
     }
     int height = img->height;
     int width = img->width;
     int channels = img->nChannels;
     int widthstep = img->widthStep;
-
-    data_t *out = new data_t[height*width*widthstep];
-    assert(out && "Allocation failed.");
 
     int i, j, k;
     int nowid = 0;
@@ -126,7 +141,7 @@ void loadImage(const std::string& filename, data_t **p_out)
         }
     }
 
-    *p_out = out;
+    cvReleaseImage(&img);
 }
 
 // Use the layer to output debug info.

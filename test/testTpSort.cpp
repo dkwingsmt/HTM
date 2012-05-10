@@ -10,7 +10,7 @@
  */
 #include <stdlib.h>
 #include <iostream>
-#include "TemporalPooler.h"
+#include "SpatialPooler.h"
 
 using namespace htm07;
 

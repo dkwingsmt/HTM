@@ -15,15 +15,15 @@
 
 namespace htm07 {
 
-LayerT::LayerT(const SpaceT &node_space, const AllocInfoT *input_alloc_info) :
+LayerT::LayerT(const SpaceT &nodes_space, const AllocInfoT *input_alloc_info) :
     _NumNodeReady(0), _NodeOutputArray(NULL), _NodeTransferArray(NULL),
     _NextLayerNodesSpace(NULL), _NextLayerAllocTable(NULL)
 {
     // Use input allocation table to initialize NodeTs
 
-    _Dims = node_space.getDimension();
-    _NumNode = node_space.getSize();
-    _NodesSpace = new SpaceT(node_space);
+    _Dims = nodes_space.getDimension();
+    _NumNode = nodes_space.getSize();
+    _NodesSpace = new SpaceT(nodes_space);
     assert(_NodesSpace && "Allocation failed.");
 
     _Nodes = new NodeT *[numNode()];
@@ -137,7 +137,8 @@ void LayerT::_conclude()
     // via _nextLayerNodeNum() and _mapNodeToNextLayerNode()
     if(_NextLayerNodesSpace)
         delete _NextLayerNodesSpace;
-    _nextLayerNodesSpace(&_NextLayerNodesSpace);
+    // TODO(mt): implement
+    //_nextLayerNodesSpace(&_NextLayerNodesSpace);
     const size_t nlnode_num = _NextLayerNodesSpace->getSize();
 
     // === Generate raw allocation table ===
@@ -172,9 +173,11 @@ void LayerT::_conclude()
 
         node_centers_nums[node_id] = this_node->centersNum();
         sum_centers_num += node_centers_nums[node_id];
-        this_raw_info->nlnode_id = _mapNodeToNextLayerNode(node_id);
+        // TODO(mt):implement
+        //this_raw_info->nlnode_id = _mapNodeToNextLayerNode(node_id);
         this_raw_info->pos = nlnode_input_sizes[this_raw_info->nlnode_id];
-        this_raw_info->len = this_node->groupsNum();
+        //TODO(mt): implement
+        //this_raw_info->len = this_node->groupsNum();
         nlnode_input_sizes[this_raw_info->nlnode_id] += this_raw_info->len;
         sum_input_size += this_raw_info->len;
     }

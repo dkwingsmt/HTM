@@ -113,6 +113,7 @@ SpatialPoolerT::SpatialPoolerT(data_t* input_data,size_t PatternSize)
     _Learned = false;
     _Concluded = false;
     _PreInputID = -1;
+    _PatternSize = PatternSize;
 }
 
 SpPatternListT::~SpPatternListT()
