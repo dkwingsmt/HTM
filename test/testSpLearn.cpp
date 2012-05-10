@@ -35,11 +35,12 @@ std::string strip(const std::string& instr, const char* charset)
 }
 
 void prepareSpaces(const SpaceT *fulldataspace, 
-            SpaceT **o_nodesspace, SpaceT **o_subdataspaces);
-void prepareAllocInfo(const SpaceT *nodesspaces, data_t *inputdata, 
+            SpaceT **o_nodesspace, SpaceT ***o_subdataspaces);
+void prepareAllocInfo(SpaceT const*const*inputsubspaces, data_t *inputdata, 
             size_t nodesnum, AllocInfoT **o_alinfo);
-void splitImage(const data_t *indata, const SpaceT *nodesspaces, 
-            AllocInfoT *allocinfo);
+void splitImage(const data_t *indata, size_t nodenum, 
+            SpaceT const*const*inputsubspaces, AllocInfoT *allocinfo);
+void showImgCV(const data_t *src, size_t w, size_t h, const char *wnd_name = "htm");
 
 void loadImage(const std::string& filename, data_t *out);
 void initializeGnuplot(const LayerT *layer);
@@ -57,20 +58,25 @@ int main ( int argc, char *argv[] )
 
     size_t l1inputspacemax[DIMS];
     VecT l1inputspacevec;
+    l1inputspacevec.dims = DIMS;
     l1inputspacevec.max = l1inputspacemax;
-    l1inputspacevec.max[0] = NODES_HEIGHT;
-    l1inputspacevec.max[1] = NODES_WIDTH;
+    l1inputspacevec.max[0] = INPUT_HEIGHT;
+    l1inputspacevec.max[1] = INPUT_WIDTH;
     SpaceT l1inputspace(&l1inputspacevec);
 
     SpaceT *l1nodesspace;
-    SpaceT *l1inputsubspaces;
+    SpaceT **l1inputsubspaces;
     AllocInfoT *l1alinfo;
 
     data_t *l1input = new data_t[INPUT_HEIGHT * INPUT_WIDTH];
     assert(l1input && "Allocation failed.");
     prepareSpaces(&l1inputspace, &l1nodesspace, &l1inputsubspaces);
+    std::cerr << l1inputsubspaces << '\n';
+    //TODO
+    //std::cerr << "{" << l1inputsubspaces->getLength(0) << "," << l1inputsubspaces->getLength(1) << "}\n";
     prepareAllocInfo(l1inputsubspaces, l1input, l1nodesspace->getSize(),
                 &l1alinfo);
+    size_t l1nodesnum = l1nodesspace->getSize();
 
     LayerT *layer1 = new LayerT(*l1nodesspace, l1alinfo);
 
@@ -95,7 +101,15 @@ int main ( int argc, char *argv[] )
             std::cerr << "Error: File \"" << infilename << "\" not found.\n";
             break;
         }
-        splitImage(input_data, l1inputsubspaces, l1alinfo);
+        showImgCV(input_data, 12, 12, "All");
+        splitImage(input_data, l1nodesnum, l1inputsubspaces, l1alinfo);
+        char name[2] = "0";
+        for(size_t i = 0; i < 9; ++i)
+        {
+            showImgCV(l1alinfo[i].pos, 4, 4, name);
+            name[0]++;
+        }
+        cvWaitKey();
         layer1->expose();
         outputGnuplot(layer1);
     }
@@ -154,7 +168,7 @@ void loadImage(const std::string& filename, data_t *out)
 //   Input is the space for full data, output is the space for nodes and 
 // array of subspaces from the fulldataspace 
 void prepareSpaces(const SpaceT *fulldataspace, 
-            SpaceT **o_nodesspace, SpaceT **o_subdataspaces)
+            SpaceT **o_nodesspace, SpaceT ***o_subdataspaces)
 {
     size_t nodessmax[2];
     VecT nodess;
@@ -164,7 +178,7 @@ void prepareSpaces(const SpaceT *fulldataspace,
     nodessmax[1] = 3;
     *o_nodesspace = new SpaceT(&nodess);
 
-    SpaceT *spaces = (SpaceT *)(new void *[9]);
+    SpaceT **spaces = (new SpaceT *[9]);
     *o_subdataspaces = spaces;
 
     size_t startmax[2];
@@ -178,36 +192,38 @@ void prepareSpaces(const SpaceT *fulldataspace,
     VecT size;
     size.dims = 2;
     size.max = sizemax;
-    sizemax[0] = 4;
+    sizemax[0] = 4; 
     sizemax[1] = 4;
 
     startmax[0] = 0;
     startmax[1] = 0;
-    new (spaces + 0) SpaceT(&start, &size, fulldataspace);
+    spaces[0] = new SpaceT(&start, &size, fulldataspace);
     startmax[1] = 4;
-    new (spaces + 1) SpaceT(&start, &size, fulldataspace);
+    spaces[1] = new SpaceT(&start, &size, fulldataspace);
     startmax[1] = 8;
-    new (spaces + 2) SpaceT(&start, &size, fulldataspace);
+    spaces[2] = new SpaceT(&start, &size, fulldataspace);
     startmax[0] = 1;
     startmax[1] = 0;
-    new (spaces + 3) SpaceT(&start, &size, fulldataspace);
+    std::cerr << spaces << '\n';
+    //std::cerr << "{" << spaces->getLength(0) << "," << spaces->getLength(1) << "}\n";
+    spaces[3] = new SpaceT(&start, &size, fulldataspace);
     startmax[1] = 4;
-    new (spaces + 4) SpaceT(&start, &size, fulldataspace);
+    spaces[4] = new SpaceT(&start, &size, fulldataspace);
     startmax[1] = 8;
-    new (spaces + 5) SpaceT(&start, &size, fulldataspace);
+    spaces[5] = new SpaceT(&start, &size, fulldataspace);
     startmax[0] = 2;
     startmax[1] = 0;
-    new (spaces + 6) SpaceT(&start, &size, fulldataspace);
+    spaces[6] = new SpaceT(&start, &size, fulldataspace);
     startmax[1] = 4;
-    new (spaces + 7) SpaceT(&start, &size, fulldataspace);
+    spaces[7] = new SpaceT(&start, &size, fulldataspace);
     startmax[1] = 8;
-    new (spaces + 8) SpaceT(&start, &size, fulldataspace);
+    spaces[8] = new SpaceT(&start, &size, fulldataspace);
 
 }
 
 //   Assume nodesnum == size(inputdata), where inputdata is where the formatted
 // data is placed, allocate inputdata to nodes
-void prepareAllocInfo(const SpaceT *nodesspaces, data_t *inputdata, 
+void prepareAllocInfo(SpaceT const*const*inputsubspaces, data_t *inputdata, 
             size_t nodesnum, AllocInfoT **o_alinfo)
 {
     data_t *nowtail = inputdata;
@@ -217,19 +233,18 @@ void prepareAllocInfo(const SpaceT *nodesspaces, data_t *inputdata,
     for(size_t i = 0; i < nodesnum; ++i)
     {
         alinfo[i].pos = nowtail;
-        alinfo[i].len = nodesspaces->getSize();
+        alinfo[i].len = inputsubspaces[i]->getSize();
         nowtail += alinfo[i].len;
     }
 }
 
 // Reformat the origin integral data into what suits nodes to grab integrally
-void splitImage(const data_t *indata, const SpaceT *nodesspaces, 
-            AllocInfoT *allocinfo)
+void splitImage(const data_t *indata, size_t nodesnum, 
+            SpaceT const*const*inputsubspaces, AllocInfoT *allocinfo)
 {
-    size_t nodesnum = nodesspaces->getSize();
     for(size_t i = 0; i < nodesnum; ++i)
     {
-        copyFromSpaceToSubSpace(indata, allocinfo->pos, nodesspaces);
+        copyFromSpaceToSubSpace(indata, allocinfo[i].pos, inputsubspaces[i]);
     }
 }
 
@@ -240,6 +255,43 @@ void initializeGnuplot(const LayerT *layer)
     std::cout << "set grid 0 " << std::endl;
     std::cout << "set key off" << std::endl;
 
+}
+
+void showImgCV(const data_t *src, size_t w, size_t h, const char *wnd_name)
+{
+    IplImage *img = cvCreateImage(cvSize(h, w), IPL_DEPTH_8U, 1);
+    IplImage *bigimg = cvCreateImage(cvSize(10*h, 10*w), IPL_DEPTH_8U, 1);
+    if(!img)
+        return;
+    char *now;
+    char *row = img->imageData;
+    const data_t *nowsrc = src;
+    for(size_t y = 0; y < h; ++y)
+    {
+        now = row;
+        for(size_t x = 0; x < w; ++x)
+        {
+            *now = (*nowsrc) ? 0 : 255;
+            ++now;
+            ++nowsrc;
+        }
+        row += img->widthStep;
+    }
+    row = bigimg->imageData;
+    for(size_t y = 0; y < 10*h; ++y)
+    {
+        now = row;
+        for(size_t x = 0; x < 10*w; ++x)
+        {
+            *now = img->imageData[(y/10)*img->widthStep + (x/10)];
+            ++now;
+        }
+        row += bigimg->widthStep;
+    }
+    std::cerr << wnd_name;
+    cvShowImage(wnd_name, img);
+    cvReleaseImage(&img);
+    cvReleaseImage(&bigimg);
 }
 
 void outputGnuplot(const LayerT *layer)
