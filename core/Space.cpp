@@ -81,7 +81,7 @@ SpaceT::~SpaceT()
     delete []_SelfMax;
     delete []_SelfIdProjector;
 }
-SpaceT::SpaceT(const VecT* start_pos, const VecT* size,SpaceT * origin)
+SpaceT::SpaceT(const VecT* start_pos, const VecT* size, const SpaceT * origin)
 {
     assert(size->dims==start_pos->dims);
     _Dims = origin->getDimension();
