@@ -134,13 +134,13 @@ int main (int argc, char *argv[])
     if(argc != 6)
     {
         std::cerr << "Useage: " << argv[0] << " <Source Image Name> "
-            "<StartWidth> <StartHeight> <CutWidth> <CutHeight>";
+            "<StartWidth> <StartHeight> <CutWidth> <CutHeight>\n";
         return 0;
     }
     data_t *origin = NULL;
-    int width;
-    int height;
-    loadImage(argv[1], &origin, &height, &width);
+    size_t width;
+    size_t height;
+    loadImage(argv[1], &origin, (int *)&height, (int *)&width);
 
     size_t stw;
     size_t sth;
@@ -150,7 +150,7 @@ int main (int argc, char *argv[])
         || (stw + cutw > width) || (sth + cuth > height))
     {
         std::cerr << "Useage: " << argv[0] << " <Source Image Name> "
-            "<StartWidth> <StartHeight> <CutWidth> <CutHeight>";
+            "<StartWidth> <StartHeight> <CutWidth> <CutHeight>\n";
         return 0;
     }
 
