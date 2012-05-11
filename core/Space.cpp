@@ -118,7 +118,7 @@ bool copyFromSpaceToSubSpace(const data_t * source, data_t * dest, const SpaceT 
     size_t * nowpos = new size_t[dimension];
     for(size_t i=0;i<dimension;++i)
     {
-        std::cerr << "copy[" << i << ", " << originspace->getLength(i) << "]\n";
+        //std::cerr << "copy[" << i << ", " << originspace->getLength(i) << "]\n";
         startpos[i]=originspace->getStartPos(i);
         endpos[i]=startpos[i]+originspace->getLength(i);
         nowpos[i]=startpos[i];

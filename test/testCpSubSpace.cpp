@@ -18,10 +18,13 @@
 
 using namespace htm07;
 
+
+//            cvRectangle(g_img_display, g_point_lst[0], cvPoint(x, y), 
+//                        cvScalar(g_rgb[0], g_rgb[1], g_rgb[2]), g_thickness);
+
 void showImgCV(const data_t *src, size_t w, size_t h, const char *wnd_name)
 {
     IplImage *img = cvCreateImage(cvSize(w, h), IPL_DEPTH_8U, 1);
-    //IplImage *bigimg = cvCreateImage(cvSize(10*w, 10*h), IPL_DEPTH_8U, 1);
     if(!img)
         return;
     char *now;
@@ -38,23 +41,9 @@ void showImgCV(const data_t *src, size_t w, size_t h, const char *wnd_name)
         }
         row += img->widthStep;
     }
-    /*
-    row = bigimg->imageData;
-    for(size_t y = 0; y < 10*h; ++y)
-    {
-        now = row;
-        for(size_t x = 0; x < 10*w; ++x)
-        {
-            *now = img->imageData[(y/10)*img->widthStep + (x/10)];
-            ++now;
-        }
-        row += bigimg->widthStep;
-    }
-    */
-    std::cerr << wnd_name;
+    std::cerr << "Showing image in the window \""<< wnd_name << "\".\n";
     cvShowImage(wnd_name, img);
     cvReleaseImage(&img);
-    //cvReleaseImage(&bigimg);
 }
 
 //   Load a image with given name, allocate a new data_t array,
