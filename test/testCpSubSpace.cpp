@@ -70,14 +70,14 @@ void loadImage(const std::string& filename, data_t **o_out,
     unsigned nowdata;
     unsigned char nowchar;
     const char* imgdata = img->imageData;
-    for(i = 0; i < height; ++i)
+    for(j = 0; j < height; ++j)
     {
-        for(j = 0; j < width; ++j)
+        for(i = 0; i < width; ++i)
         {
             nowdata = 0;
             for(k = 0; k < channels; ++k)
             {
-                nowchar = imgdata[i * widthstep + j * channels + k];
+                nowchar = imgdata[(j * widthstep + i) * channels + k];
                 nowdata += nowchar;
             }
             out[nowid] = (nowdata < 128); 
@@ -143,7 +143,7 @@ int main (int argc, char *argv[])
         return 0;
     }
 
-    size_t fullmax[2] = {height, width};
+    size_t fullmax[2] = {width, height};
     VecT fullvec;
     fullvec.dims = 2;
     fullvec.max = fullmax;
