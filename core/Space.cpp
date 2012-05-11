@@ -125,10 +125,26 @@ bool copyFromSpaceToSubSpace(const data_t * source, data_t * dest, const SpaceT 
     }
     int countdes = 0;
     int countsource = 0;
+    bool tempflag = false;
     while(1)
     {
-        bool tempflag = true;
-        for(size_t i = 0; i < dimension&&tempflag; ++i)
+       // for (size_t i=0;i<dimension;++i)
+       //   std::cerr << nowpos[i] << " " ;
+       // std::cerr << std::endl;
+        countsource = 0;
+        //TODO(lrc):very very poor algorithm, left to be modified
+        for(size_t i=0;i<dimension;++i)
+        {
+            countsource += nowpos[i]*originspace->getTotalIdProj(i);
+            std::cerr << originspace->getTotalIdProj(i)<< " ";
+        }
+        std::cerr << std::endl;
+        dest[countdes] = source[countsource];
+        countdes++;
+
+        tempflag = true;
+       // for(size_t i = 0; i < dimension&&tempflag; ++i)
+        size_t i=0;
         {
             if(nowpos[i]+1<endpos[i])
             {
@@ -161,14 +177,6 @@ bool copyFromSpaceToSubSpace(const data_t * source, data_t * dest, const SpaceT 
         }
         if(tempflag == true)
           break;
-        countsource = 0;
-        //TODO(lrc):very very poor algorithm, left to be modified
-        for(size_t i=0;i<dimension;++i)
-        {
-            countsource += nowpos[i]*originspace->getTotalIdProj(i);
-        }
-        dest[countdes] = source[countsource];
-        countdes++;
     }
     delete []nowpos;
     delete []endpos;
