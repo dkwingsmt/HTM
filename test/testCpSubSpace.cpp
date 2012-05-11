@@ -70,14 +70,14 @@ void loadImage(const std::string& filename, data_t **o_out,
     unsigned nowdata;
     unsigned char nowchar;
     const char* imgdata = img->imageData;
-    for(j = 0; j < height; ++j)
+    for(i = 0; i < height; ++i)
     {
-        for(i = 0; i < width; ++i)
+        for(j = 0; j < width; ++j)
         {
             nowdata = 0;
             for(k = 0; k < channels; ++k)
             {
-                nowchar = imgdata[(j * widthstep + i) * channels + k];
+                nowchar = imgdata[(i * widthstep + j) * channels + k];
                 nowdata += nowchar;
             }
             out[nowid] = (nowdata < 128); 

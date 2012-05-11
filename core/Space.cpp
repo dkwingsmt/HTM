@@ -128,17 +128,12 @@ bool copyFromSpaceToSubSpace(const data_t * source, data_t * dest, const SpaceT 
     bool tempflag = false;
     while(1)
     {
-       // for (size_t i=0;i<dimension;++i)
-       //   std::cerr << nowpos[i] << " " ;
-       // std::cerr << std::endl;
         countsource = 0;
         //TODO(lrc):very very poor algorithm, left to be modified
         for(size_t i=0;i<dimension;++i)
         {
             countsource += nowpos[i]*originspace->getTotalIdProj(i);
-            std::cerr << originspace->getTotalIdProj(i)<< " ";
         }
-        std::cerr << std::endl;
         dest[countdes] = source[countsource];
         countdes++;
 

@@ -151,7 +151,7 @@ void loadImage(const std::string& filename, data_t *out)
             nowdata = 0;
             for(k = 0; k < channels; ++k)
             {
-                nowchar = imgdata[i * widthstep + j * channels + k];
+                nowchar = imgdata[(i * widthstep + j * channels) + k];
                 nowdata += nowchar;
             }
             // 0x0 if white, 0x1 otherwise; gave a bit of tolerance
@@ -195,28 +195,26 @@ void prepareSpaces(const SpaceT *fulldataspace,
     sizemax[0] = 4; 
     sizemax[1] = 4;
 
+    startmax[1] = 0;
     startmax[0] = 0;
-    startmax[1] = 0;
     spaces[0] = new SpaceT(&start, &size, fulldataspace);
-    startmax[1] = 4;
+    startmax[0] = 4;
     spaces[1] = new SpaceT(&start, &size, fulldataspace);
-    startmax[1] = 8;
+    startmax[0] = 8;
     spaces[2] = new SpaceT(&start, &size, fulldataspace);
-    startmax[0] = 1;
-    startmax[1] = 0;
-    std::cerr << spaces << '\n';
-    //std::cerr << "{" << spaces->getLength(0) << "," << spaces->getLength(1) << "}\n";
+    startmax[1] = 4;
+    startmax[0] = 0;
     spaces[3] = new SpaceT(&start, &size, fulldataspace);
-    startmax[1] = 4;
+    startmax[0] = 4;
     spaces[4] = new SpaceT(&start, &size, fulldataspace);
-    startmax[1] = 8;
+    startmax[0] = 8;
     spaces[5] = new SpaceT(&start, &size, fulldataspace);
-    startmax[0] = 2;
-    startmax[1] = 0;
-    spaces[6] = new SpaceT(&start, &size, fulldataspace);
-    startmax[1] = 4;
-    spaces[7] = new SpaceT(&start, &size, fulldataspace);
     startmax[1] = 8;
+    startmax[0] = 0;
+    spaces[6] = new SpaceT(&start, &size, fulldataspace);
+    startmax[0] = 4;
+    spaces[7] = new SpaceT(&start, &size, fulldataspace);
+    startmax[0] = 8;
     spaces[8] = new SpaceT(&start, &size, fulldataspace);
 
 }
@@ -289,7 +287,7 @@ void showImgCV(const data_t *src, size_t w, size_t h, const char *wnd_name)
         row += bigimg->widthStep;
     }
     std::cerr << wnd_name;
-    cvShowImage(wnd_name, img);
+    cvShowImage(wnd_name, bigimg);
     cvReleaseImage(&img);
     cvReleaseImage(&bigimg);
 }
