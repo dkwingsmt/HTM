@@ -8,6 +8,7 @@
  * =====================================================================================
  */
 #include <stdlib.h>
+#include <iostream>
 #include "SpatialPooler.h"
 #define MAX_GROUP_SIZE 30
 #define NTOP 2
@@ -114,6 +115,7 @@ SpatialPoolerT::SpatialPoolerT(data_t* input_data,size_t PatternSize)
     _Concluded = false;
     _PreInputID = -1;
     _PatternSize = PatternSize;
+    _MaxDist = 1;
     OneDfloat_T temp;
     temp.push_back(0);
     _AdjMat.push_back(temp);

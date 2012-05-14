@@ -109,7 +109,7 @@ int main ( int argc, char *argv[] )
             showImgCV(l1alinfo[i].pos, 4, 4, name);
             name[0]++;
         }
-        cvWaitKey();
+        //cvWaitKey();
         layer1->expose();
         outputGnuplot(layer1);
     }
