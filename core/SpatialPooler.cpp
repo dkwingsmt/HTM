@@ -206,6 +206,7 @@ void SpatialPoolerT::_addTimeLine(size_t prevID, size_t currID)
     _AdjMat[currID][prevID] ++;
     _AdjMat[prevID][currID] ++;
 
+    _PreInputID = currID;
 }
 
 
