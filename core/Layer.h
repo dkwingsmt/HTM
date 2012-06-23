@@ -35,7 +35,7 @@ public:
     size_t numNode() const              { return _NumNode;  }
     const SpaceT *nodesSpace() const    { return _NodesSpace;   }
 
-    void forceConclude();
+    void forceConclude()    {   _conclude();    }
 
     // Prev members
 
@@ -47,7 +47,7 @@ private:
 
     //   This two function used in conclusion process in expose()
     // determined only by this->_NodesSpace
-    // TODO(mt): complete them
+    // TODO(mt): generalize them two
     void _nextLayerNodesSpace(SpaceT **out) const;
     id_t _mapNodeToNextLayerNode(id_t src) const;
 

@@ -70,7 +70,7 @@ public:
     void concludeStepTwo(data_t *sp_output_pos,
                          data_t *tp_output_pos);
     size_t centersNum() const           { return _Sp->getCentersNum();  }
-    size_t groupsNum() const;
+    size_t groupsNum() const            { return _Tp ? _Tp->groupsNum() : 0;    }
 
 private:
     data_t *_outputData()               { return _Layer->_NodeOutputArray;   }
