@@ -15,6 +15,7 @@
 #include "Layer.h"
 #include "Node.h"
 #include "SpatialPooler.h"
+#include "TemporalPooler.h"
 
 namespace htm07 {
 
@@ -32,6 +33,10 @@ public:
     {   return &p_node->_Sp->_AdjMat;    }
     const SpPatternListT *getNodeSpPatternList(const NodeT *p_node)
     {   return p_node->_Sp->_PatternList;   }
+    size_t getNodeTpGroupNum(const NodeT *node)
+    {   return node->_Tp->_GroupsNum;  }
+    const size_t *getNodeTpGroups(const NodeT *node)
+    {   return node->_Tp->_Groups;  }
 };
 
 }   // namespace htm07
