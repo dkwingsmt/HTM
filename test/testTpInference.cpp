@@ -88,7 +88,38 @@ int main ( int argc, char *argv[] )
     std::string infilename;
     while(1)
     {
-        system("read n1");
+       // system("read n1");
+        std::getline(std::cin, infilename);
+        std::cerr << infilename << "\n"; // TODO:Debug
+        if(!std::cin)
+            break;
+        infilename = strip(infilename, " \t\n\r");
+        if(infilename.size() == 0)
+            continue;
+        else if(infilename == "q")
+            break;
+
+        loadImage(infilename, input_data);
+        if(input_data == NULL)
+        {
+            std::cerr << "Error: File \"" << infilename << "\" not found.\n";
+            break;
+        }
+        splitImage(input_data, l1nodesnum, l1inputsubspaces, l1alinfo);
+        char name[2] = "0";
+        for(size_t i = 0; i < 9; ++i)
+        {
+            showImgCV(l1alinfo[i].pos, 4, 4, name);
+            name[0]++;
+        }
+        //cvWaitKey();
+        layer1->expose();
+      //  outputGnuplot(layer1);
+    }
+    //displayGnuplot();
+    layer1->forceConclude();
+    while(1)
+    {
         std::getline(std::cin, infilename);
         std::cerr << infilename << "\n"; // TODO:Debug
         if(!std::cin)
@@ -107,43 +138,6 @@ int main ( int argc, char *argv[] )
         }
         showImgCV(input_data, 12, 12, "All");
         splitImage(input_data, l1nodesnum, l1inputsubspaces, l1alinfo);
-        char name[2] = "0";
-        for(size_t i = 0; i < 9; ++i)
-        {
-            showImgCV(l1alinfo[i].pos, 4, 4, name);
-            name[0]++;
-        }
-        //cvWaitKey();
-        layer1->expose();
-      //  outputGnuplot(layer1);
-    }
-    //displayGnuplot();
-    layer1->forceConclude();
-    while(1)
-    {
-        std::cerr << infilename << "\n"; // TODO:Debug
-        if(!std::cin)
-            break;
-        infilename = strip(infilename, " \t\n\r");
-        if(infilename.size() == 0)
-            continue;
-        else if(infilename == "q")
-            break;
-
-        loadImage(infilename, input_data);
-        if(input_data == NULL)
-        {
-            std::cerr << "Error: File \"" << infilename << "\" not found.\n";
-            break;
-        }
-        showImgCV(input_data, 12, 12, "All");
-        splitImage(input_data, l1nodesnum, l1inputsubspaces, l1alinfo);
-        char name[2] = "0";
-        for(size_t i = 0; i < 9; ++i)
-        {
-            showImgCV(l1alinfo[i].pos, 4, 4, name);
-            name[0]++;
-        }
         //cvWaitKey();
         layer1->expose();
         outputTpGroup(layer1,NodeX,NodeY);
@@ -320,7 +314,6 @@ void showImgCV(const data_t *src, size_t w, size_t h, const char *wnd_name)
         }
         row += bigimg->widthStep;
     }
-    std::cerr << wnd_name;
     cvShowImage(wnd_name, bigimg);
     cvReleaseImage(&img);
     cvReleaseImage(&bigimg);
@@ -334,6 +327,7 @@ void outputTpGroup(const LayerT *layer,size_t NodeX,size_t NodeY)
     AllocInfoT* out = layer->getOutputAllocInfo();
     size_t id = NodeX*NODES_WIDTH+NodeY;
     data_t *ans = out[id].pos;
+    std::cerr << out[id].len << std::endl;
     for (size_t i=0;i<out[id].len;i++)
     {
         std::cerr << ans[i];
