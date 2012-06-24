@@ -116,7 +116,7 @@ int main ( int argc, char *argv[] )
     displayGnuplot();
     IntrospectionT is;
     //printNodeSpTable(is.getLayerNodes(layer1)[4]);
-    layer1->_conclude();
+    layer1->forceConclude();
     printNodeTpSort(is.getLayerNodes(layer1)[4]);
     while(1);
 
@@ -417,8 +417,9 @@ void printNodeTpSort(const NodeT* node)
     size_t patnum = pat_lst->size();
     std::vector<size_t> group_sizes; // grp->grp_size
     std::vector<std::list<std::list<size_t> > > draw_table; // grp->row->patids
+    std::list<std::list<size_t> > default_line(1, std::list<size_t>());
     group_sizes.resize(group_num, 0);
-    draw_table.resize(group_num);
+    draw_table.resize(group_num, default_line);
     size_t max_pat_in_grp = 0;
     for(size_t pat_id = 0; pat_id < patnum; ++pat_id)
     {
@@ -483,8 +484,8 @@ void printNodeTpSort(const NodeT* node)
                 cvResetImageROI(pat_bg);
 
                 cvSetImageROI(disp, disp_rect_now);
-                cvCopy(pat_now, disp);
-                cvResetImageROI(pat_now);
+                cvCopy(pat_bg, disp);
+                cvResetImageROI(disp);
 
                 disp_rect_now.x += PATTERN_SPACING + block_w;
             }
