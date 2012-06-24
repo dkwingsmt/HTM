@@ -38,6 +38,7 @@ public:
 
     void forceConclude()                {_NumNodeReady = _NumNode; _conclude();};
     AllocInfoT * getOutputAllocInfo() const  { return _NextLayerAllocTable;};
+
     // Prev members
 
 private:
@@ -48,7 +49,7 @@ private:
 
     //   This two function used in conclusion process in expose()
     // determined only by this->_NodesSpace
-    // TODO(mt): complete them
+    // TODO(mt): generalize them two
     void _nextLayerNodesSpace(SpaceT **out) const;
     id_t _mapNodeToNextLayerNode(id_t src) const;
 
