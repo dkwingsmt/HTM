@@ -30,10 +30,10 @@ class SpPatternListT // store the patterns, or the so-called "quantization cente
 public:
     SpPatternListT(size_t PatternSize):_PatternSize(PatternSize){};
     ~SpPatternListT();
-    size_t size(){return _Patterns.size();}; // returns how many patterns are stored
-    size_t getPatternSize(){return _PatternSize;}; // returns the size of each pattern
+    size_t size() const {return _Patterns.size();}; // returns how many patterns are stored
+    size_t getPatternSize() const {return _PatternSize;}; // returns the size of each pattern
     void setPatternSize(size_t PatternSize){_PatternSize=PatternSize;}; 
-    const data_t* getPattern(int i){return _Patterns[i];}; // get pattern by id
+    const data_t* getPattern(int i) const {return _Patterns[i];}; // get pattern by id
     void push(const data_t * input,size_t data_size); 
     // input pattern, will new a data_t * to fully copy the data,deleted in the ~Sp...
 private:

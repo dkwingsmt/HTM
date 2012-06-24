@@ -17,9 +17,11 @@
 
 namespace htm07{
 
+class IntrospectionT;
 
 class TemporalPoolerT
 {
+    friend class IntrospectionT;
 private :
     size_t* _Groups;
     size_t _GroupsNum;
