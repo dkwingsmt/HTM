@@ -137,8 +137,7 @@ void LayerT::_conclude()
     // via _nextLayerNodeNum() and _mapNodeToNextLayerNode()
     if(_NextLayerNodesSpace)
         delete _NextLayerNodesSpace;
-    // TODO(mt): implement
-    //_nextLayerNodesSpace(&_NextLayerNodesSpace);
+    _nextLayerNodesSpace(&_NextLayerNodesSpace);
     const size_t nlnode_num = _NextLayerNodesSpace->getSize();
 
     // === Generate raw allocation table ===
@@ -168,16 +167,15 @@ void LayerT::_conclude()
         this_node = _Nodes[node_id];
         this_raw_info = output_raw_info + node_id;
 
-        assert(this_node->readyToConclude());
+        // TODO:If forceConclude() is allowed, this line should be moved elsewhere
+        //assert(this_node->readyToConclude());
         this_node->concludeStepOne();
 
         node_centers_nums[node_id] = this_node->centersNum();
         sum_centers_num += node_centers_nums[node_id];
-        // TODO(mt):implement
-        //this_raw_info->nlnode_id = _mapNodeToNextLayerNode(node_id);
+        this_raw_info->nlnode_id = _mapNodeToNextLayerNode(node_id);
         this_raw_info->pos = nlnode_input_sizes[this_raw_info->nlnode_id];
-        //TODO(mt): implement
-        //this_raw_info->len = this_node->groupsNum();
+        this_raw_info->len = this_node->groupsNum();
         nlnode_input_sizes[this_raw_info->nlnode_id] += this_raw_info->len;
         sum_input_size += this_raw_info->len;
     }
@@ -223,6 +221,20 @@ void LayerT::_conclude()
     delete[] output_raw_info;
     delete[] node_centers_nums;
 
+}
+// TODO(mt): generalize this
+void LayerT::_nextLayerNodesSpace(SpaceT **out) const
+{
+    size_t m[2] = {1, 1};
+    VecT v;
+    v.dims = 1;
+    v.max = m;
+    *out = new SpaceT(&v);
+}
+// TODO(mt): generalize this
+id_t LayerT::_mapNodeToNextLayerNode(id_t src) const
+{
+    return 0;
 }
 
 }   // namespace htm07

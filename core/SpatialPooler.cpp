@@ -219,7 +219,7 @@ void SpatialPoolerT::sortGroup(size_t **center_group_info,size_t *group_num) con
           myadj[i*_AdjMat.size()+j] = _AdjMat[i][j];        
       }
     
-    formTemperalGroup(myadj,_AdjMat.size()*_AdjMat.size(), center_group_info,group_num);
+    formTemperalGroup(myadj,_AdjMat.size(), center_group_info,group_num);
     delete []myadj;
 }
 

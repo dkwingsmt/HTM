@@ -36,6 +36,7 @@ public :
     void setIODest(data_t* inputdata,data_t* outputdata){
     _InputData = inputdata; _OutputData = outputdata;};
     void TpInference();
+    size_t groupsNum() const { return _GroupsNum; }
 
 };
 
