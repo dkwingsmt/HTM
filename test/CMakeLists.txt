@@ -8,3 +8,6 @@ target_link_libraries( testTpSort htm07core ${OpenCV_LIBS})
 
 add_executable( testCpSubSpace testCpSubSpace.cpp )
 target_link_libraries( testCpSubSpace htm07core ${OpenCV_LIBS})
+
+add_executable( testTpInference testTpInference.cpp )
+target_link_libraries( testTpInference htm07core ${OpenCV_LIBS})
