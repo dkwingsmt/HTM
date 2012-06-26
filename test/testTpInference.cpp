@@ -369,12 +369,14 @@ int main ( int argc, char *argv[] )
       //  outputGnuplot(layer1);
     }
     //displayGnuplot();
-    IntrospectionT is;
-    printNodeSpTable(is.getLayerNodes(layer1)[4]);
+    const SpaceT *nodes_space = layer1->nodesSpace();
+    size_t id = NodeX*nodes_space->getIdProj(1)+
+                NodeY*nodes_space->getIdProj(0);
+    printNodeSpTable(layer1->node(id));
     cvWaitKey();
     layer1->forceConclude();
     cvWaitKey();
-    printNodeTpSort(is.getLayerNodes(layer1)[4]);
+    printNodeTpSort(layer1->node(id));
     while(1)
     {
         std::getline(std::cin, infilename);
@@ -578,7 +580,6 @@ void showImgCV(const data_t *src, size_t w, size_t h, const char *wnd_name)
 
 void outputTpGroup(const LayerT *layer,size_t NodeX,size_t NodeY)
 {
-    IntrospectionT is;
     const SpaceT *nodes_space = layer->nodesSpace();
     size_t id = NodeX*nodes_space->getIdProj(1)+
                 NodeY*nodes_space->getIdProj(0);
