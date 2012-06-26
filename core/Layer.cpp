@@ -17,7 +17,7 @@ namespace htm07 {
 
 LayerT::LayerT(const SpaceT &nodes_space, const AllocInfoT *input_alloc_info) :
     _NumNodeReady(0), _NodeOutputArray(NULL), _NodeTransferArray(NULL),
-    _NextLayerNodesSpace(NULL), _NextLayerAllocTable(NULL)
+    _NextLayerNodesSpace(NULL), _NextLayerAllocTable(NULL),_NextLayerSpaceSave(NULL)
 {
     // Use input allocation table to initialize NodeTs
 
@@ -238,3 +238,40 @@ id_t LayerT::_mapNodeToNextLayerNode(id_t src) const
 }
 
 }   // namespace htm07
+void LayerT::_nextLayerNodesSpace(size_t numbertodivide) const//numbertodivide is each side to divide, for example, 3*3 to 1*1,numbertodivide is 3, not 9
+{
+    SpaceT ** out;
+   size_t dimens =  _NodesSpace->getDimension();
+   size_t * m = new size_t[dimens];
+   for(size_t temp = 0;temp<dimens;++temp)
+   {
+       size_t tempres = _NodesSpace->getLength(temp) 
+       m[temp] =(( tempres-1) / numbertodivide)+1;
+   }
+   VecT v;
+   v.dims = dimens;
+   v.max = m;
+   *out = new SpaceT(&v);
+   _NextLayerSpaceSave = *out;
+}
+SpaceT ** LayerT::getNextLayerSpaceT() const
+{
+    return & _NextLayerSpaceSave;
+}
+id_t LayerT::_mapNodeToNextLayerNode(id_t src,size_t numbertodivide) const
+{
+   if(_NextLayerNodesSpaceSave == NULL)
+     _nextLayerNodesSpace(numbertodivide);
+   size_t temp = _NextLayerSpaceSave->getDimension();
+   size_t count = 0;
+  // coord_t * coordall = new coord_t[tempcount];
+   for(size_t tempcount = 0;tempcount<temp;tempcount++)
+   {
+       coord_t tempcoor = getCoord(src,tempcount);
+       size_t tempdivide = _NextLayerSpaceSave->getLength(tempcount);
+       size_t tempidp = _NextLayerSpaceSave->getIdProj(tempcount);
+        count += tempcoor / tempdivide * tempidp;
+        
+   }
+   return count;
+}

@@ -36,7 +36,7 @@ public:
     const SpaceT *nodesSpace() const    { return _NodesSpace;   }
 
     void forceConclude()    {   _conclude();    }
-
+    SpaceT ** getNextLayerSpaceT() const;
     // Prev members
 
 private:
@@ -50,7 +50,8 @@ private:
     // TODO(mt): generalize them two
     void _nextLayerNodesSpace(SpaceT **out) const;
     id_t _mapNodeToNextLayerNode(id_t src) const;
-
+    void _nextLayerNodesSpace(SpaceT **out,size_t numbertodivide) const;
+    id_t _mapNodeToNextLayerNode(id_t src,size_t numbertodivide) const;
     void _conclude();
 
     size_t _Dims;
@@ -63,6 +64,7 @@ private:
     data_t *_NodeTransferArray;
     SpaceT *_NextLayerNodesSpace;
     AllocInfoT *_NextLayerAllocTable;
+    SpaceT * _NextLayerSpaceSave;
 
 private:
     // Forbid
