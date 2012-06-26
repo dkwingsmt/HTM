@@ -65,6 +65,8 @@ public:
     
     bool readyToConclude() const            { return _Sp->readyToConclude();  }
     bool concluded() const                  { return _Concluded;  }
+    const data_t *outputData() const        { return _outputData();   }
+    size_t outputSize() const               { return _Tp->groupsNum();   }
 
     void concludeStepOne();
     void concludeStepTwo(data_t *sp_output_pos,

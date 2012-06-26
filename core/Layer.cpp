@@ -3,7 +3,7 @@
  *
  *       Filename:  Layer.cpp
  *
- *    Description:  
+ *    Description:
  *
  * =====================================================================================
  */
@@ -62,7 +62,7 @@ void LayerT::expose()
         _Nodes[i]->nodeExpose();
     }
 
-    //   Such condition never happens that 
+    //   Such condition never happens that
     // this layer is ready before this exposure but turned not ready after.
     assert(!(before_ready && !fullyReady()));
 
@@ -88,16 +88,16 @@ void LayerT::_conclude()
     //
     // This function generate allocation tables:
     // [Raw]
-    //   An array of size_t, 
+    //   An array of size_t,
     // each indicates the size of one node from the next layer
-    //   An array of {next_node_id, pos, len}s, 
+    //   An array of {next_node_id, pos, len}s,
     // each corresponds to one node from this layer
     //   An array of size_t for the transfer data from sp to tp
     // [Mature]
     //   An array of AllocInfoT for nodes of the next layer
-    //   An array of AllocInfoT for nodes of this layer as output 
+    //   An array of AllocInfoT for nodes of this layer as output
     //   An array of AllocInfoT for nodes of this layer as transfer
-    //      (The last two will only be used for NodeT::concludeStepTwo() 
+    //      (The last two will only be used for NodeT::concludeStepTwo()
     //         so probably they won't really be created and stored.)
     //
     // Structure:
@@ -113,25 +113,25 @@ void LayerT::_conclude()
     //  nlnode_input[0]     nlnode_input[1]     nlnode_input[2]
     //  |                   |                   |
     //  v                   v                   v
-    //  |-------------------|-------------------|--          --| 
+    //  |-------------------|-------------------|--          --|
     //  |    |    |    |    |    |    |    |    |     ...      |
     //  |-------------------|-------------------|--          --|
     //  ^    ^    ^    ^    ^
-    //  |    |    |    node_output[5]           
+    //  |    |    |    node_output[5]
     //  |    |    node_output[4]
-    //  |    node_output[1] |                       
+    //  |    node_output[1] |
     //  node_output[0]      node_output[2]
     //  |____| <- node[0].groups_num
     //
     //  The transfer allocation tables are like
     //  node_transfer[0]   node_transfer[2]
-    //  |         node_transfer[1]  node_transfer[3]                 
-    //  v         v        v        v 
-    //  |---------|--------|--------|--------|--          --| 
+    //  |         node_transfer[1]  node_transfer[3]
+    //  v         v        v        v
+    //  |---------|--------|--------|--------|--          --|
     //  |         |        |        |        |     ...      |
     //  |---------|--------|--------|--------|--          --|
     //  |_________| <- node[0].centers_num
-    
+
     const size_t node_num = numNode();
     //   The distribution of node in the next layer is determined by this layer
     // via _nextLayerNodeNum() and _mapNodeToNextLayerNode()
@@ -144,7 +144,7 @@ void LayerT::_conclude()
 
     // === Variables below are used to generate AllocInfoT for nlnode ===
     // The size of input of nlnodes; also is sum_groups_num
-    size_t sum_input_size = 0;  
+    size_t sum_input_size = 0;
     // Sum of sizes of the output of nodes that belongs to each nlnode
     size_t *nlnode_input_sizes = new size_t[nlnode_num];
     assert(nlnode_input_sizes && "Allocation failed.");
@@ -159,7 +159,7 @@ void LayerT::_conclude()
     assert(node_centers_nums && "Allocation failed.");
 
     // Variables below are used as temp vars
-    _AllocRawInfoT *this_raw_info;   
+    _AllocRawInfoT *this_raw_info;
     NodeT *this_node;
 
     for(size_t node_id = 0; node_id < node_num; ++node_id)
@@ -181,25 +181,25 @@ void LayerT::_conclude()
     }
 
     // === Generate mature allocation table ===
-    
+
     if(_NodeTransferArray)
         delete[] _NodeTransferArray;
     if(_NodeOutputArray)
         delete[] _NodeOutputArray;
     _NodeTransferArray = new data_t[sum_centers_num];
-    _NodeOutputArray = new data_t[sum_input_size]; 
+    _NodeOutputArray = new data_t[sum_input_size];
     _NextLayerAllocTable = new AllocInfoT[nlnode_num];
     data_t *transfer_alloc;
     data_t *output_alloc;
-    assert(_NodeTransferArray && _NodeOutputArray 
+    assert(_NodeTransferArray && _NodeOutputArray
            && _NextLayerAllocTable && "Allocation failed.");
 
-    data_t *now_data_tail;   // Temp var 
+    data_t *now_data_tail;   // Temp var
     id_t target_nlnode;      // Temp var, the nlnode that this node belongs
     now_data_tail = _NodeOutputArray;
     for(size_t nlnode_id = 0; nlnode_id < nlnode_num; ++nlnode_id)
     {
-        _NextLayerAllocTable[nlnode_id].len = nlnode_input_sizes[nlnode_id];     
+        _NextLayerAllocTable[nlnode_id].len = nlnode_input_sizes[nlnode_id];
         _NextLayerAllocTable[nlnode_id].pos = now_data_tail;
         now_data_tail += nlnode_input_sizes[nlnode_id];
     }

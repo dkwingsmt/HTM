@@ -30,13 +30,17 @@ public:
     // Use input data to get each node in this layer trained or to infer
     void expose();
 
+
     bool fullyReady() const             { return _NumNodeReady >= _NumNode;  }
     size_t dims() const                 { return _Dims;     }
     size_t numNode() const              { return _NumNode;  }
     const SpaceT *nodesSpace() const    { return _NodesSpace;   }
+    const NodeT *node(id_t id) const    { return _Nodes[id];    }
 
-    void forceConclude()    {   _conclude();    }
     SpaceT ** getNextLayerSpaceT() const;
+    void forceConclude()                {_NumNodeReady = _NumNode; _conclude();};
+    AllocInfoT * getOutputAllocInfo() const  { return _NextLayerAllocTable;};
+
     // Prev members
 
 private:
