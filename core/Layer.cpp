@@ -245,7 +245,7 @@ void LayerT::_nextLayerNodesSpace(size_t numbertodivide) const//numbertodivide i
    size_t * m = new size_t[dimens];
    for(size_t temp = 0;temp<dimens;++temp)
    {
-       size_t tempres = _NodesSpace->getLength(temp) 
+       size_t tempres = _NodesSpace->getLength(temp);
        m[temp] =(( tempres-1) / numbertodivide)+1;
    }
    VecT v;

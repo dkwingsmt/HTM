@@ -454,9 +454,23 @@ void loadImage(const std::string& filename, data_t *out)
 //   Split the full data into subspaces for nodes
 //   Input is the space for full data, output is the space for nodes and 
 // array of subspaces from the fulldataspace 
-void prepareSpaces(const SpaceT *fulldataspace, 
+void prepareSpaces(const SpaceT *fulldataspace,size_t numberdivide, 
             SpaceT **o_nodesspace, SpaceT ***o_subdataspaces)
 {
+  
+   size_t dimens = fulldataspace->getDimension();
+   size_t * mtemp = new size_t[dimens];
+   for(size_t temp = 0;temp<dimens;++temp)
+   {
+       size_t tempres = fulldataspace->getLength(temp); 
+       mtemp[temp] =(( tempres-1) / numbertodivide)+1;
+   }
+   VecT v;
+   v.dims = dimens;
+   v.max = m;
+   *out = new SpaceT(&v);
+
+    /*
     size_t nodessmax[2];
     VecT nodess;
     nodess.dims = 2;
@@ -503,6 +517,7 @@ void prepareSpaces(const SpaceT *fulldataspace,
     spaces[7] = new SpaceT(&start, &size, fulldataspace);
     startmax[0] = 8;
     spaces[8] = new SpaceT(&start, &size, fulldataspace);
+    */
 
 }
 
