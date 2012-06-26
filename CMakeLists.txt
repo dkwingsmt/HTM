@@ -5,8 +5,6 @@ project(HTM07)
 SET ( CMAKE_BUILD_TYPE "Debug" )
 #SET ( CMAKE_BUILD_TYPE "Release" )
 
-add_definitions("-O0")
-
 SET(CMAKE_CXX_FLAGS_DEBUG "$ENV{CXXFLAGS} -O0 -Wall -g -ggdb -DDEBUG")
 SET(CMAKE_CXX_FLAGS_RELEASE "$ENV{CXXFLAGS} -O3 -Wall -DRELEASE")
 
