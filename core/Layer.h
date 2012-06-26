@@ -35,6 +35,7 @@ public:
     size_t dims() const                 { return _Dims;     }
     size_t numNode() const              { return _NumNode;  }
     const SpaceT *nodesSpace() const    { return _NodesSpace;   }
+    const NodeT *node(id_t id) const    { return _Nodes[id];    }
 
     void forceConclude()                {_NumNodeReady = _NumNode; _conclude();};
     AllocInfoT * getOutputAllocInfo() const  { return _NextLayerAllocTable;};

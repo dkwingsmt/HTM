@@ -214,8 +214,9 @@ void printNodeTpSort(const NodeT* node)
     size_t patnum = pat_lst->size();
     std::vector<size_t> group_sizes; // grp->grp_size
     std::vector<std::list<std::list<size_t> > > draw_table; // grp->row->patids
+    std::list<std::list<size_t> > default_line(1, std::list<size_t>());
     group_sizes.resize(group_num, 0);
-    draw_table.resize(group_num);
+    draw_table.resize(group_num, default_line);
     size_t max_pat_in_grp = 0;
     for(size_t pat_id = 0; pat_id < patnum; ++pat_id)
     {
@@ -280,8 +281,8 @@ void printNodeTpSort(const NodeT* node)
                 cvResetImageROI(pat_bg);
 
                 cvSetImageROI(disp, disp_rect_now);
-                cvCopy(pat_now, disp);
-                cvResetImageROI(pat_now);
+                cvCopy(pat_bg, disp);
+                cvResetImageROI(disp);
 
                 disp_rect_now.x += PATTERN_SPACING + block_w;
             }
@@ -357,12 +358,12 @@ int main ( int argc, char *argv[] )
             break;
         }
         splitImage(input_data, l1nodesnum, l1inputsubspaces, l1alinfo);
-        char name[2] = "0";
+        /*char name[2] = "0";
         for(size_t i = 0; i < 9; ++i)
         {
             showImgCV(l1alinfo[i].pos, 4, 4, name);
             name[0]++;
-        }
+        }*/
         //cvWaitKey();
         layer1->expose();
       //  outputGnuplot(layer1);
@@ -578,15 +579,21 @@ void showImgCV(const data_t *src, size_t w, size_t h, const char *wnd_name)
 void outputTpGroup(const LayerT *layer,size_t NodeX,size_t NodeY)
 {
     IntrospectionT is;
-    size_t nodenum = is.getLayerNodeNum(layer);
     const SpaceT *nodes_space = layer->nodesSpace();
-    AllocInfoT* out = layer->getOutputAllocInfo();
-    size_t id = NodeX*NODES_WIDTH+NodeY;
-    data_t *ans = out[id].pos;
-    std::cerr << out[id].len << std::endl;
-    for (size_t i=0;i<out[id].len;i++)
+    size_t id = NodeX*nodes_space->getIdProj(1)+
+                NodeY*nodes_space->getIdProj(0);
+    if(nodes_space->getSize() < id)
     {
-        std::cerr << ans[i];
+        std::cerr << "Error in outputTpGroup: id exceeds nodenum.\n";
+        return;
+    }
+    const NodeT *node = layer->node(id);
+    size_t output_size = node->outputSize();
+    const data_t *ans = node->outputData();
+    std::cerr << output_size << std::endl;
+    for (size_t i=0;i<output_size;i++)
+    {
+        std::cerr << ans[i] << ' ';
     }
     std::cerr << std::endl;
 
