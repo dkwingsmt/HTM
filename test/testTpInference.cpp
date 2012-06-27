@@ -468,8 +468,26 @@ void prepareSpaces(const SpaceT *fulldataspace,size_t numberdivide,
    VecT v;
    v.dims = dimens;
    v.max = m;
-   *out = new SpaceT(&v);
-
+   *o_nodesspace = new SpaceT(&v);
+   size_t savenewsize=(*o_nodesspace)->getSize(); 
+   SpaceT ** outputsubspace = new SpaceT*[savenewsize];
+   for(size_t i = 0;i<savenewsize;++i)
+   {
+       VecT * tempsize = new VecT[dimens];//TODO:spacet add a function to get all size
+       VecT * allsize = new VecT[dimens];
+       for(size_t j = 0;j<dimens;++j)
+       {
+           tempsize[j] = (*o_nodesspace)->getTotalCoord(i,j)*numberdivide;
+           if(tempsize[j]+mtemp[j]>=(*o_nodesspace)->getTotalLength(j))
+             allsize[j] = (*o_nodesspace)->getTotalLength(j);
+           else
+             allsize[j] = tempsize[j] + mtemp[j];
+       }
+       SpaceT * newsubspace;
+       fulldataspace->getSubSpace(tempsize,allsize,&newsubspace);
+       outputsubspace[i] = newsubspace;
+   }
+   *o_subdataspaces = outputsubspace;
     /*
     size_t nodessmax[2];
     VecT nodess;
